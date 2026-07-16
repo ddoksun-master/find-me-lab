@@ -1524,8 +1524,18 @@ class Component extends DCLogic {
       try {
         const data = JSON.parse(fr.result);
         if (!data || data.app !== 'ME:LAB' || !data.state) { window.alert('ME:LAB 백업 파일이 아니에요.'); return; }
-        if (!window.confirm('백업(' + (data.exportedAt || '').slice(0, 10) + ')으로 복원할까요? 지금 기록은 덮어써져요.')) return;
-        this.setState(data.state, () => { this.persist(); window.alert('복원 완료!'); });
+        if (!this.uid || this.uid === 'demo' || !this.db) { window.alert('먼저 구글 로그인을 한 뒤 복원해주세요. (로그인해야 계정에 저장돼요)'); return; }
+        const jn = (data.state.journalLog || []).length, an = (data.state.archive || []).length;
+        if (!window.confirm('백업(' + (data.exportedAt || '').slice(0, 10) + ') 복원할까요?\n발자국 ' + jn + '개 · 모습기록 ' + an + '일\n\n지금 기록은 덮어써져요.')) return;
+        this.setState(Object.assign({}, data.state, { screen: 'home', sub: 'today', tagFilter: '전체' }), () => {
+          this.persist();
+          // 모습(사진) 기록은 별도 문서(arch-*)로도 저장 — 새로고침 후에도 남아요
+          const base = this.db.collection("users").doc(this.uid).collection("app");
+          (data.state.archive || []).forEach(a => {
+            if (a && a.dateKey && a.photos) base.doc("arch-" + a.dateKey).set({ dateKey: a.dateKey, photos: a.photos }, { merge: true }).catch(() => {});
+          });
+          window.alert('복원 완료! 발자국 ' + jn + '개를 되돌렸어요.');
+        });
       } catch (err) { window.alert('파일을 읽지 못했어요.'); }
     };
     fr.readAsText(file);
@@ -2422,6 +2432,7 @@ class Component extends DCLogic {
         };
       }),
       exportTrace: this.exportTrace,
+      importBackup: this.importBackup,
       exportNote: s.exported ? '방금 내보냄 · CSV' : 'CSV · PDF',
       exportNoteColor: s.exported ? '#4E6E54' : '#8A8272',
       showTags: this.props.showLayerTags ?? true,
