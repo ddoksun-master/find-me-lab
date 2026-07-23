@@ -140,6 +140,37 @@ body{background:#0A1322;font-family:'IBM Plex Sans KR',system-ui,sans-serif;-web
               </div>
             </div>
 
+            <!-- 규칙 이행 · 여닫이 -->
+            <sc-if value="{{ hasActiveRules }}" hint-placeholder-val="{{ false }}">
+            <div style="background:#FDFAF1;border:1px solid rgba(78,110,84,0.25);border-radius:16px;margin-top:14px;overflow:hidden;box-shadow:0 1px 3px rgba(28,43,75,0.1)">
+              <div onClick="{{ toggleRuleCheck }}" style="display:flex;align-items:center;gap:8px;padding:14px 15px;cursor:pointer">
+                <svg width="15" viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="#4E6E54" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                <span style="font-size:12.5px;font-weight:700;color:#4E6E54">규칙 이행</span>
+                <span style="font-size:10.5px;color:#8A8272">{{ ruleCheckSummary }}</span>
+                <svg width="15" viewBox="0 0 24 24" fill="none" style="margin-left:auto;transition:transform 0.15s;transform:rotate({{ ruleCheckChevron }})"><path d="M6 9l6 6 6-6" stroke="#8A8272" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+              </div>
+              <sc-if value="{{ ruleCheckOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:0 15px 15px;display:flex;flex-direction:column;gap:9px">
+                <sc-for list="{{ ruleCheckRows }}" as="rc" hint-placeholder-count="3">
+                <div style="background:#F1EADA;border-radius:12px;padding:11px 12px">
+                  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+                    <span style="padding:2px 8px;border-radius:999px;background:{{ rc.toneBg }};color:{{ rc.toneColor }};font-size:9.5px;font-weight:700">{{ rc.toneLabel }}</span>
+                    <span style="padding:2px 8px;border-radius:999px;background:rgba(28,43,75,0.07);color:#7A7260;font-size:9.5px;font-weight:600">{{ rc.duration }}</span>
+                  </div>
+                  <div style="font-size:12.5px;color:#3A4150;font-weight:600;line-height:1.4">{{ rc.text }}</div>
+                  <sc-if value="{{ rc.hasPrompt }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:#8A8272;margin-top:4px;line-height:1.45">{{ rc.checkPrompt }}</div></sc-if>
+                  <div style="display:flex;gap:7px;margin-top:9px">
+                    <button onClick="{{ rc.onKeep }}" style="flex:1;cursor:pointer;border:1px solid {{ rc.keptBorder }};background:{{ rc.keptBg }};color:{{ rc.keptColor }};border-radius:9px;padding:8px 0;font-family:'IBM Plex Sans KR',sans-serif;font-size:12px;font-weight:600" style-active="transform:translateY(1px)">지켰어요</button>
+                    <button onClick="{{ rc.onBreak }}" style="flex:1;cursor:pointer;border:1px solid {{ rc.brokeBorder }};background:{{ rc.brokeBg }};color:{{ rc.brokeColor }};border-radius:9px;padding:8px 0;font-family:'IBM Plex Sans KR',sans-serif;font-size:12px;font-weight:600" style-active="transform:translateY(1px)">못했어요</button>
+                  </div>
+                </div>
+                </sc-for>
+                <div style="font-size:10px;color:#8A8272;line-height:1.5;display:flex;gap:5px;align-items:flex-start"><svg width="11" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="9" stroke="#8A8272" stroke-width="1.8"></circle><path d="M12 8v5M12 16h.01" stroke="#8A8272" stroke-width="1.8" stroke-linecap="round"></path></svg>여기 체크한 결과는 다음 돌아보기 동기화 때 Claude에게 함께 전해져, 규칙이 잘 맞았는지 다시 짚어줘요.</div>
+              </div>
+              </sc-if>
+            </div>
+            </sc-if>
+
             <!-- week strip -->
             <div style="background:#FDFAF1;border:1px solid rgba(28,43,75,0.10);border-radius:16px;padding:13px 10px;margin-top:14px">
               <div style="display:flex;justify-content:space-between;align-items:center;padding:0 6px 10px">
@@ -296,6 +327,8 @@ body{background:#0A1322;font-family:'IBM Plex Sans KR',system-ui,sans-serif;-web
     <span style="color:#D9A38A">③ qualities: 대화·발자국에서 원하는</span>
     <span style="color:#D9A38A">  방향 추론 + 현재와의 간격</span>
     <span style="color:#D9A38A">④ reframe: 감정 근본원인(5Whys)으로</span>
+    <span style="color:#D9A38A">⑤ rules: 되묻기 뒤 규칙 최대 3개</span>
+    <span style="color:#D9A38A">  (톤·기간·재확인 질문 포함)</span>
     <span style="color:#D9A38A">⊕ 잘하는 것·조급한 지점·보완점</span>
     <span style="color:#D9A38A">  추천 · 질문 뒤 확인 후 JSON"</span>,
   <span style="color:#C9A24B">"scope"</span>: <span style="color:#D9A38A">"{{ scopeCode }}"</span>,
@@ -310,7 +343,8 @@ body{background:#0A1322;font-family:'IBM Plex Sans KR',system-ui,sans-serif;-web
   <span style="color:#C9A24B">"expected_output"</span>: { <span style="color:#C9A24B">"discoveries"</span>:<span style="color:#D9A38A">"성공·방해 요인+가능성"</span>,
     <span style="color:#C9A24B">"report"</span>:<span style="color:#D9A38A">"시나리오 근거 종합 3문장"</span>,
     <span style="color:#C9A24B">"qualities"</span>:<span style="color:#D9A38A">"원하는 방향+현재 간격"</span>,
-    <span style="color:#C9A24B">"reframe"</span>:<span style="color:#D9A38A">"감정 재해석+근본원인"</span> }
+    <span style="color:#C9A24B">"reframe"</span>:<span style="color:#D9A38A">"감정 재해석+근본원인"</span>,
+    <span style="color:#C9A24B">"rules"</span>:<span style="color:#D9A38A">"규칙3(톤·기간·재확인)"</span> }
 }</div>
               <div style="position:absolute;bottom:0;left:0;right:0;height:34px;background:linear-gradient(transparent,#0B1220)"></div>
             </div>
@@ -367,15 +401,31 @@ body{background:#0A1322;font-family:'IBM Plex Sans KR',system-ui,sans-serif;-web
               </div>
               <sc-if value="{{ hasSyncRules }}" hint-placeholder-val="{{ false }}">
               <div style="margin-top:14px;padding-top:13px;border-top:1px solid rgba(78,110,84,0.18)">
-                <div style="display:flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;letter-spacing:0.04em;color:#4E6E54;margin-bottom:9px"><svg width="12" viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="#4E6E54" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>지금의 규칙 <span style="font-weight:400;color:#8A8272">· 동기화가 고른 {{ syncRuleCount }}개</span></div>
+                <div style="display:flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;letter-spacing:0.04em;color:#4E6E54;margin-bottom:9px"><svg width="12" viewBox="0 0 24 24" fill="none"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" stroke="#4E6E54" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{ ruleHeadLabel }} <span style="font-weight:400;color:#8A8272">· {{ ruleHeadNote }}</span></div>
                 <div style="display:flex;flex-direction:column;gap:7px">
                   <sc-for list="{{ syncRuleRows }}" as="r" hint-placeholder-count="3">
                   <div style="background:#FDFAF1;border-radius:11px;padding:10px 11px">
+                    <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+                      <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:999px;background:{{ r.toneBg }};color:{{ r.toneColor }};font-size:9.5px;font-weight:700"><span style="width:5px;height:5px;border-radius:50%;background:{{ r.toneDot }}"></span>{{ r.toneLabel }}</span>
+                      <span style="padding:2px 8px;border-radius:999px;background:rgba(28,43,75,0.07);color:#7A7260;font-size:9.5px;font-weight:600">{{ r.duration }}</span>
+                    </div>
                     <div style="font-size:12.5px;color:#3A4150;font-weight:600;line-height:1.4">{{ r.text }}</div>
                     <sc-if value="{{ r.why }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:#8A8272;margin-top:4px;line-height:1.45">{{ r.why }}</div></sc-if>
+                    <sc-if value="{{ r.hasCheck }}" hint-placeholder-val="{{ false }}"><div style="font-size:10.5px;color:#7460AE;margin-top:6px;display:flex;gap:5px;align-items:flex-start;line-height:1.45"><svg width="11" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;margin-top:1px"><path d="M4 9a8 8 0 0113-3l2 2M20 15a8 8 0 01-13 3l-2-2" stroke="#7460AE" stroke-width="1.7" stroke-linecap="round"></path></svg>다음 동기화 재확인 · “{{ r.checkPrompt }}”</div></sc-if>
                   </div>
                   </sc-for>
                 </div>
+                <sc-if value="{{ rulesProposed }}" hint-placeholder-val="{{ true }}">
+                  <button onClick="{{ confirmRules }}" style="width:100%;border:none;cursor:pointer;margin-top:11px;display:flex;align-items:center;justify-content:center;gap:7px;background:#4E6E54;color:#F6F1E6;border-radius:11px;padding:12px;font-family:'IBM Plex Sans KR',sans-serif;font-size:13px;font-weight:700" style-active="transform:translateY(1px)"><svg width="15" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#F6F1E6" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"></path></svg>규칙까지 확정하기</button>
+                  <div style="font-size:10px;color:#8A8272;margin-top:7px;text-align:center;line-height:1.5">확정하면 규칙이 적용되고, 일지 탭에서 매일 이행을 체크할 수 있어요.</div>
+                </sc-if>
+                <sc-if value="{{ rulesConfirmed }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:11px;padding:11px 12px;background:rgba(78,110,84,0.1);border:1px solid rgba(78,110,84,0.22);border-radius:12px">
+                    <div style="font-size:11px;font-weight:700;color:#4E6E54;display:flex;align-items:center;gap:5px"><svg width="13" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#4E6E54" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>규칙 확정 완료 · 최종 내보낼 내용</div>
+                    <div style="font-size:10.5px;color:#7A7260;margin-top:5px;line-height:1.5">확정한 규칙을 Claude에게 다시 전하거나 기록으로 남겨요.</div>
+                    <div onClick="{{ copyFinalRules }}" style="display:flex;align-items:center;justify-content:center;gap:7px;background:#1C2B4B;color:#F6F1E6;border-radius:10px;padding:10px;margin-top:9px;font-size:12.5px;font-weight:600;cursor:pointer" style-active="transform:translateY(1px)"><svg width="14" viewBox="0 0 24 24" fill="none"><rect x="8" y="8" width="12" height="12" rx="2" stroke="#fff" stroke-width="1.7"></rect><path d="M4 15V5a2 2 0 012-2h9" stroke="#fff" stroke-width="1.7" stroke-linecap="round"></path></svg>{{ finalCopyLabel }}</div>
+                  </div>
+                </sc-if>
               </div>
               </sc-if>
               <div style="margin-top:14px;padding-top:13px;border-top:1px solid rgba(78,110,84,0.18)">
@@ -401,7 +451,7 @@ body{background:#0A1322;font-family:'IBM Plex Sans KR',system-ui,sans-serif;-web
             <div style="height:14px"></div>
           </div>
 
-          <nav style="position:sticky;bottom:0;z-index:5;display:flex;justify-content:space-around;align-items:flex-end;padding:5px 8px calc(7px + env(safe-area-inset-bottom));background:rgba(246,241,230,0.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid rgba(28,43,75,0.10)"><a onClick="{{ goTab2 }}" style="text-decoration:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;flex:1"><svg width="22" viewBox="0 0 24 24" fill="none"><path d="M12 6.5C10.5 5 7.5 4.5 4.5 5v13c3-.5 6 0 7.5 1.5M12 6.5C13.5 5 16.5 4.5 19.5 5v13c-3-.5-6 0-7.5 1.5M12 6.5v13" stroke="{{ navJColor }}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path></svg><span style="font-size:9.5px;color:{{ navJColor }};font-weight:{{ navJWeight }}">일지</span></a><a onClick="{{ goTab3 }}" style="text-decoration:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;margin-top:-10px"><div style="width:40px;height:40px;border-radius:50%;background:#BC6B43;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 12px rgba(188,107,67,0.4)"><svg width="19" viewBox="0 0 24 24" fill="none"><path d="M3 9A1.5 1.5 0 014.5 7.5h2.2L8 5.5h8l1.3 2h2.2A1.5 1.5 0 0121 9v8.5A1.5 1.5 0 0119.5 19h-15A1.5 1.5 0 013 17.5V9z" stroke="#fff" stroke-width="1.5"></path><circle cx="12" cy="13" r="3.1" stroke="#fff" stroke-width="1.5"></circle></svg></div><span style="font-size:9.5px;color:{{ navLColor }};font-weight:{{ navLWeight }}">모습</span></a><a onClick="{{ goTab5 }}" style="text-decoration:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;flex:1"><svg width="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.4" stroke="{{ navMColor }}" stroke-width="1.7"></circle><path d="M5.5 20c0-3.6 2.9-6.3 6.5-6.3s6.5 2.7 6.5 6.3" stroke="{{ navMColor }}" stroke-width="1.7" stroke-linecap="round"></path></svg><span style="font-size:9.5px;color:{{ navMColor }};font-weight:{{ navMWeight }}">나</span></a></nav>
+          <nav style="position:sticky;bottom:0;z-index:5;display:flex;justify-content:space-around;align-items:flex-end;padding:5px 8px calc(7px + env(safe-area-inset-bottom));background:rgba(246,241,230,0.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid rgba(28,43,75,0.10)"><a onClick="{{ goTab2 }}" style="text-decoration:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;flex:1"><svg width="22" viewBox="0 0 24 24" fill="none"><path d="M12 6.5C10.5 5 7.5 4.5 4.5 5v13c3-.5 6 0 7.5 1.5M12 6.5C13.5 5 16.5 4.5 19.5 5v13c-3-.5-6 0-7.5 1.5M12 6.5v13" stroke="{{ navJColor }}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path></svg><span style="font-size:9.5px;color:{{ navJColor }};font-weight:{{ navJWeight }}">일지</span></a><a onClick="{{ goTab3 }}" style="text-decoration:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;margin-top:-10px"><div style="width:40px;height:40px;border-radius:50%;background:#BC6B43;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 12px rgba(188,107,67,0.4)"><svg width="19" viewBox="0 0 24 24" fill="none"><path d="M3 9A1.5 1.5 0 014.5 7.5h2.2L8 5.5h8l1.3 2h2.2A1.5 1.5 0 0121 9v8.5A1.5 1.5 0 0119.5 19h-15A1.5 1.5 0 013 17.5V9z" stroke="#fff" stroke-width="1.5"></path><circle cx="12" cy="13" r="3.1" stroke="#fff" stroke-width="1.5"></circle></svg></div><span style="font-size:9.5px;color:{{ navLColor }};font-weight:{{ navLWeight }}">모습</span></a><a onClick="{{ goTab5 }}" style="text-decoration:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;flex:1"><svg width="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="{{ navMColor }}" stroke-width="1.7"></circle><path d="M15.6 8.4l-2.1 5.1-5.1 2.1 2.1-5.1 5.1-2.1z" stroke="{{ navMColor }}" stroke-width="1.6" stroke-linejoin="round"></path></svg><span style="font-size:9.5px;color:{{ navMColor }};font-weight:{{ navMWeight }}">발견</span></a></nav>
         </div>
       
 
@@ -503,8 +553,8 @@ body{background:#0A1322;font-family:'IBM Plex Sans KR',system-ui,sans-serif;-web
                 <sc-for list="{{ upSlots }}" as="u" hint-placeholder-count="4">
                   <div style="grid-column:{{ u.span }};display:flex;flex-direction:column;gap:6px">
                     <span style="font-size:11.5px;font-weight:600;color:#3A4150">{{ u.label }}</span>
-                    <div style="position:relative;aspect-ratio:{{ u.ratio }};border-radius:14px;overflow:hidden;background:#EAE3D0;border:1px solid rgba(28,43,75,0.12)">
-                      <sc-if value="{{ u.has }}" hint-placeholder-val="{{ true }}"><img src="{{ u.src }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:{{ u.filt }}"/></sc-if>
+                    <div style="position:relative;aspect-ratio:{{ u.ratio }};border-radius:14px;overflow:hidden;background:#1A1D22;border:1px solid rgba(28,43,75,0.12)">
+                      <sc-if value="{{ u.has }}" hint-placeholder-val="{{ true }}"><img src="{{ u.src }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:{{ u.filt }}"/></sc-if>
                       <sc-if value="{{ u.empty }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#A89F88"><svg width="26" viewBox="0 0 24 24" fill="none"><path d="M12 16V5m0 0l-4 4m4-4l4 4M5 19h14" stroke="#A89F88" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span style="font-size:10.5px">사진 올리기</span></div></sc-if>
                       <label style="position:absolute;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:5px;padding:7px;background:rgba(28,43,75,0.62);color:#F6F1E6;font-size:11px;font-weight:600;cursor:pointer">
                         <svg width="12" viewBox="0 0 24 24" fill="none"><path d="M3 9a2 2 0 012-2h1.5l1-1.5h5l1 1.5H19a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" stroke="#F6F1E6" stroke-width="1.6"/><circle cx="12" cy="12.5" r="3" stroke="#F6F1E6" stroke-width="1.6"/></svg>{{ u.btn }}
@@ -515,6 +565,7 @@ body{background:#0A1322;font-family:'IBM Plex Sans KR',system-ui,sans-serif;-web
                 </sc-for>
               </div>
               <button onClick="{{ lookBack }}" style="width:100%;border:none;cursor:pointer;margin-top:18px;background:#BC6B43;color:#F6F1E6;border-radius:13px;padding:14px;font-family:'IBM Plex Sans KR',sans-serif;font-size:13.5px;font-weight:700" style-active="transform:translateY(1px)">완료</button>
+              <button onClick="{{ upDelete }}" style="width:100%;border:1px solid rgba(188,107,67,0.3);cursor:pointer;margin-top:9px;background:transparent;color:#B4736A;border-radius:13px;padding:12px;font-family:'IBM Plex Sans KR',sans-serif;font-size:12.5px;font-weight:600;display:flex;align-items:center;justify-content:center;gap:6px" style-active="transform:translateY(1px)"><svg width="14" viewBox="0 0 24 24" fill="none"><path d="M5 7h14M10 7V5h4v2M6 7l1 12a1 1 0 001 1h8a1 1 0 001-1l1-12" stroke="#B4736A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>이 날짜 기록 삭제</button>
               <div style="height:10px"></div>
             </div>
 
@@ -537,7 +588,7 @@ body{background:#0A1322;font-family:'IBM Plex Sans KR',system-ui,sans-serif;-web
                 <sc-for list="{{ cmpCells }}" as="c" hint-placeholder-count="2">
                   <div style="display:flex;flex-direction:column;gap:7px">
                     <div style="position:relative;aspect-ratio:{{ cmpAspect }};max-height:{{ cmpCellMaxH }};border-radius:12px;overflow:hidden;background:#1A1D22;border:1px solid rgba(255,255,255,0.08)">
-                      <sc-if value="{{ c.has }}" hint-placeholder-val="{{ true }}"><img src="{{ c.src }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:{{ c.filt }}"/></sc-if>
+                      <sc-if value="{{ c.has }}" hint-placeholder-val="{{ true }}"><img src="{{ c.src }}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;filter:{{ c.filt }}"/></sc-if>
                       <sc-if value="{{ c.empty }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:rgba(246,241,230,0.4)">이 자세 사진 없음</div></sc-if>
                       <span style="position:absolute;top:6px;left:6px;width:20px;height:20px;border-radius:6px;background:{{ c.col }};color:#0E1013;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">{{ c.letter }}</span>
                       <span style="position:absolute;bottom:6px;left:6px;padding:2px 8px;border-radius:999px;background:rgba(0,0,0,0.55);color:#F6F1E6;font-size:10.5px;font-weight:600">{{ c.md }} · {{ c.wd }}</span>
@@ -552,7 +603,7 @@ body{background:#0A1322;font-family:'IBM Plex Sans KR',system-ui,sans-serif;-web
             </div>
 
           </div>
-          <nav style="position:sticky;bottom:0;z-index:5;display:flex;justify-content:space-around;align-items:flex-end;padding:5px 8px calc(7px + env(safe-area-inset-bottom));background:rgba(246,241,230,0.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid rgba(28,43,75,0.10)"><a onClick="{{ goTab2 }}" style="text-decoration:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;flex:1"><svg width="22" viewBox="0 0 24 24" fill="none"><path d="M12 6.5C10.5 5 7.5 4.5 4.5 5v13c3-.5 6 0 7.5 1.5M12 6.5C13.5 5 16.5 4.5 19.5 5v13c-3-.5-6 0-7.5 1.5M12 6.5v13" stroke="{{ navJColor }}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path></svg><span style="font-size:9.5px;color:{{ navJColor }};font-weight:{{ navJWeight }}">일지</span></a><a onClick="{{ goTab3 }}" style="text-decoration:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;margin-top:-10px"><div style="width:40px;height:40px;border-radius:50%;background:#BC6B43;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 12px rgba(188,107,67,0.4)"><svg width="19" viewBox="0 0 24 24" fill="none"><path d="M3 9A1.5 1.5 0 014.5 7.5h2.2L8 5.5h8l1.3 2h2.2A1.5 1.5 0 0121 9v8.5A1.5 1.5 0 0119.5 19h-15A1.5 1.5 0 013 17.5V9z" stroke="#fff" stroke-width="1.5"></path><circle cx="12" cy="13" r="3.1" stroke="#fff" stroke-width="1.5"></circle></svg></div><span style="font-size:9.5px;color:{{ navLColor }};font-weight:{{ navLWeight }}">모습</span></a><a onClick="{{ goTab5 }}" style="text-decoration:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;flex:1"><svg width="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.4" stroke="{{ navMColor }}" stroke-width="1.7"></circle><path d="M5.5 20c0-3.6 2.9-6.3 6.5-6.3s6.5 2.7 6.5 6.3" stroke="{{ navMColor }}" stroke-width="1.7" stroke-linecap="round"></path></svg><span style="font-size:9.5px;color:{{ navMColor }};font-weight:{{ navMWeight }}">나</span></a></nav>
+          <nav style="position:sticky;bottom:0;z-index:5;display:flex;justify-content:space-around;align-items:flex-end;padding:5px 8px calc(7px + env(safe-area-inset-bottom));background:rgba(246,241,230,0.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid rgba(28,43,75,0.10)"><a onClick="{{ goTab2 }}" style="text-decoration:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;flex:1"><svg width="22" viewBox="0 0 24 24" fill="none"><path d="M12 6.5C10.5 5 7.5 4.5 4.5 5v13c3-.5 6 0 7.5 1.5M12 6.5C13.5 5 16.5 4.5 19.5 5v13c-3-.5-6 0-7.5 1.5M12 6.5v13" stroke="{{ navJColor }}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path></svg><span style="font-size:9.5px;color:{{ navJColor }};font-weight:{{ navJWeight }}">일지</span></a><a onClick="{{ goTab3 }}" style="text-decoration:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;margin-top:-10px"><div style="width:40px;height:40px;border-radius:50%;background:#BC6B43;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 12px rgba(188,107,67,0.4)"><svg width="19" viewBox="0 0 24 24" fill="none"><path d="M3 9A1.5 1.5 0 014.5 7.5h2.2L8 5.5h8l1.3 2h2.2A1.5 1.5 0 0121 9v8.5A1.5 1.5 0 0119.5 19h-15A1.5 1.5 0 013 17.5V9z" stroke="#fff" stroke-width="1.5"></path><circle cx="12" cy="13" r="3.1" stroke="#fff" stroke-width="1.5"></circle></svg></div><span style="font-size:9.5px;color:{{ navLColor }};font-weight:{{ navLWeight }}">모습</span></a><a onClick="{{ goTab5 }}" style="text-decoration:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;flex:1"><svg width="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="{{ navMColor }}" stroke-width="1.7"></circle><path d="M15.6 8.4l-2.1 5.1-5.1 2.1 2.1-5.1 5.1-2.1z" stroke="{{ navMColor }}" stroke-width="1.6" stroke-linejoin="round"></path></svg><span style="font-size:9.5px;color:{{ navMColor }};font-weight:{{ navMWeight }}">발견</span></a></nav>
         </div>
       
         </div>
@@ -580,7 +631,7 @@ body{background:#0A1322;font-family:'IBM Plex Sans KR',system-ui,sans-serif;-web
               <div style="position:relative">
                 <div style="font-family:'Gowun Batang',serif;font-size:19px;line-height:1.35">이번 주의 나 · 종합 판단</div>
                 <div style="display:flex;gap:9px;background:rgba(246,241,230,0.08);border-radius:11px;padding:12px 13px;margin-top:13px"><span style="flex-shrink:0;padding:2px 8px;border-radius:999px;background:#E7C97A;color:#A9822F;font-size:9.5px;font-weight:700;height:fit-content">종합</span><span style="font-size:12.5px;line-height:1.65;color:rgba(246,241,230,0.92)">{{ reportText }}</span></div>
-                <div style="font-size:10.5px;color:rgba(246,241,230,0.55);margin-top:12px;line-height:1.5">돌아보기 동기화로 받아온 Claude의 종합 분석이에요 · 나 탭 · 돌아보기에서 언제든 다시 열 수 있어요.</div>
+                <div style="font-size:10.5px;color:rgba(246,241,230,0.55);margin-top:12px;line-height:1.5">돌아보기 동기화로 받아온 Claude의 종합 분석이에요 · 발견 탭 · 돌아보기에서 언제든 다시 열 수 있어요.</div>
               </div>
             </div>
 
@@ -595,7 +646,7 @@ body{background:#0A1322;font-family:'IBM Plex Sans KR',system-ui,sans-serif;-web
             </div>
 
             
-                <div style="font-size:10.5px;color:#8A8272;margin-top:14px;line-height:1.55;text-align:center">이 판단의 재료가 된 발견들은 나 탭 · 돌아보기에 있어요.</div>
+                <div style="font-size:10.5px;color:#8A8272;margin-top:14px;line-height:1.55;text-align:center">이 판단의 재료가 된 발견들은 발견 탭 · 돌아보기에 있어요.</div>
               </div>
             </div>
           </sc-if>
@@ -854,7 +905,7 @@ body{background:#0A1322;font-family:'IBM Plex Sans KR',system-ui,sans-serif;-web
 
             <div style="height:14px"></div>
           </div>
-          <nav style="position:sticky;bottom:0;z-index:5;display:flex;justify-content:space-around;align-items:flex-end;padding:5px 8px calc(7px + env(safe-area-inset-bottom));background:rgba(246,241,230,0.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid rgba(28,43,75,0.10)"><a onClick="{{ goTab2 }}" style="text-decoration:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;flex:1"><svg width="22" viewBox="0 0 24 24" fill="none"><path d="M12 6.5C10.5 5 7.5 4.5 4.5 5v13c3-.5 6 0 7.5 1.5M12 6.5C13.5 5 16.5 4.5 19.5 5v13c-3-.5-6 0-7.5 1.5M12 6.5v13" stroke="{{ navJColor }}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path></svg><span style="font-size:9.5px;color:{{ navJColor }};font-weight:{{ navJWeight }}">일지</span></a><a onClick="{{ goTab3 }}" style="text-decoration:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;margin-top:-10px"><div style="width:40px;height:40px;border-radius:50%;background:#BC6B43;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 12px rgba(188,107,67,0.4)"><svg width="19" viewBox="0 0 24 24" fill="none"><path d="M3 9A1.5 1.5 0 014.5 7.5h2.2L8 5.5h8l1.3 2h2.2A1.5 1.5 0 0121 9v8.5A1.5 1.5 0 0119.5 19h-15A1.5 1.5 0 013 17.5V9z" stroke="#fff" stroke-width="1.5"></path><circle cx="12" cy="13" r="3.1" stroke="#fff" stroke-width="1.5"></circle></svg></div><span style="font-size:9.5px;color:{{ navLColor }};font-weight:{{ navLWeight }}">모습</span></a><a onClick="{{ goTab5 }}" style="text-decoration:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;flex:1"><svg width="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.4" stroke="{{ navMColor }}" stroke-width="1.7"></circle><path d="M5.5 20c0-3.6 2.9-6.3 6.5-6.3s6.5 2.7 6.5 6.3" stroke="{{ navMColor }}" stroke-width="1.7" stroke-linecap="round"></path></svg><span style="font-size:9.5px;color:{{ navMColor }};font-weight:{{ navMWeight }}">나</span></a></nav>
+          <nav style="position:sticky;bottom:0;z-index:5;display:flex;justify-content:space-around;align-items:flex-end;padding:5px 8px calc(7px + env(safe-area-inset-bottom));background:rgba(246,241,230,0.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid rgba(28,43,75,0.10)"><a onClick="{{ goTab2 }}" style="text-decoration:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;flex:1"><svg width="22" viewBox="0 0 24 24" fill="none"><path d="M12 6.5C10.5 5 7.5 4.5 4.5 5v13c3-.5 6 0 7.5 1.5M12 6.5C13.5 5 16.5 4.5 19.5 5v13c-3-.5-6 0-7.5 1.5M12 6.5v13" stroke="{{ navJColor }}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path></svg><span style="font-size:9.5px;color:{{ navJColor }};font-weight:{{ navJWeight }}">일지</span></a><a onClick="{{ goTab3 }}" style="text-decoration:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;margin-top:-10px"><div style="width:40px;height:40px;border-radius:50%;background:#BC6B43;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 12px rgba(188,107,67,0.4)"><svg width="19" viewBox="0 0 24 24" fill="none"><path d="M3 9A1.5 1.5 0 014.5 7.5h2.2L8 5.5h8l1.3 2h2.2A1.5 1.5 0 0121 9v8.5A1.5 1.5 0 0119.5 19h-15A1.5 1.5 0 013 17.5V9z" stroke="#fff" stroke-width="1.5"></path><circle cx="12" cy="13" r="3.1" stroke="#fff" stroke-width="1.5"></circle></svg></div><span style="font-size:9.5px;color:{{ navLColor }};font-weight:{{ navLWeight }}">모습</span></a><a onClick="{{ goTab5 }}" style="text-decoration:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;flex:1"><svg width="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="{{ navMColor }}" stroke-width="1.7"></circle><path d="M15.6 8.4l-2.1 5.1-5.1 2.1 2.1-5.1 5.1-2.1z" stroke="{{ navMColor }}" stroke-width="1.6" stroke-linejoin="round"></path></svg><span style="font-size:9.5px;color:{{ navMColor }};font-weight:{{ navMWeight }}">발견</span></a></nav>
         </div>
       
       
@@ -945,6 +996,14 @@ const CONTEXT_QUESTIONS = [
   { id: 'curious', q: 'Claude에게 지금 가장 묻고 싶은 것 / 궁금한 점은?', hint: '분석에서 꼭 짚어줬으면 하는 질문' },
 ];
 const RULES_SEED = [];
+// 규칙 톤(Claude가 근거로 고름) · 앱은 배지만 표시
+const TONE_META = {
+  '제안': { label: '이렇게 해보면', bg: 'rgba(127,178,135,0.16)', color: '#4E6E54', dot: '#6F8F6B' },
+  '문제': { label: '계속 걸리는 것', bg: 'rgba(231,201,122,0.22)', color: '#A9822F', dot: '#C39A3F' },
+  '직면': { label: '지금 마주할 것', bg: 'rgba(217,138,90,0.18)', color: '#BC6B43', dot: '#BC6B43' },
+};
+const normTone = (t) => { const s = String(t || '').toLowerCase(); if (/직면|confront|face/.test(s)) return '직면'; if (/문제|problem|issue/.test(s)) return '문제'; return TONE_META[t] ? t : '제안'; };
+const normDur = (d) => { const s = String(d || '').trim(); if (/상시|always|ongoing|매일/i.test(s)) return '상시'; if (/7|주|week/i.test(s)) return '1주일'; if (/3|사흘/i.test(s)) return '3일'; return '1주일'; };
 const SEED_VERSION = 'kakao-2026-07-15';
 const REMIND_TIMES = ['오후 8:00', '오후 9:00', '오후 10:00'];
 const NOTIF_DEFS = [
@@ -973,7 +1032,7 @@ const INITIAL_STATE = () => ({ syncView: 'preview', copied: false,
             wishes: WISH_SEED.slice(), wishSheet: false, wishText: '',
             rules: RULES_SEED.slice(),
             recordOn: { '수면': true, '행동 패턴': true, '식사 + 몸 반응': true, '기억될 모습(사진)': true, '감정': true },
-            remindIdx: 1, exported: false, anaTab: 'review', meTab: 'back', reportSheet: false, oneTab: 2, journalView: 'log', notifPhase: 'am', entryYmd: '', contextAnswers: {}, syncStage: 'ask', syncQuestions: [], syncAnswers: {}, qaHistory: [], archive: [], discoveries: DISC_SEED.slice(), qualities: [], reportData: null, appearanceFeedback: null, syncCount: 0, createdAt: null, dateFilter: '', collapsedDates: {}, lastSyncAt: null, lastSyncYmd: '', syncNewCount: 0, syncStageUp: 0, syncFootIn: 0, syncUpList: [], syncNewList: [], lookScreen: 'home', calY: null, calM: null, editYmd: null, cmpN: 2, cmpSlots: [], cmpPose: 0, records: SEED_RECORDS() });
+            remindIdx: 1, exported: false, anaTab: 'review', meTab: 'back', reportSheet: false, oneTab: 2, journalView: 'log', notifPhase: 'am', entryYmd: '', contextAnswers: {}, syncStage: 'ask', syncQuestions: [], syncAnswers: {}, qaHistory: [], archive: [], discoveries: DISC_SEED.slice(), qualities: [], reportData: null, appearanceFeedback: null, syncCount: 0, createdAt: null, dateFilter: '', collapsedDates: {}, lastSyncAt: null, lastSyncYmd: '', syncNewCount: 0, syncStageUp: 0, syncFootIn: 0, syncUpList: [], syncNewList: [], lookScreen: 'home', calY: null, calM: null, editYmd: null, cmpN: 2, cmpSlots: [], cmpPose: 0, rulesConfirmed: false, ruleCheckOpen: false, records: SEED_RECORDS() });
 
 // ─────────────────────────────────────────────────────────────
 // Firebase 데이터 구조 (설계만 — 아직 미연결, 나중에 그대로 연결)
@@ -1022,7 +1081,7 @@ class Component extends DCLogic {
   componentDidMount() {
     this.pastImg = BLANK;
     this.todayImg = BLANK;
-    // 기록은 Firebase(구글 계정)에만 저장 — 로컬 복원 없음
+    // 기록은 로그인한 계정(Firebase)에만 저장돼요
     this.forceUpdate();
     this.initFirebase();
   }
@@ -1168,6 +1227,12 @@ class Component extends DCLogic {
     } catch (err) { window.alert(err.message || '업로드 실패'); }
   };
   clearRecordShot = (ymd, i) => this.setState(s => ({ records: s.records.map(r => r.ymd === ymd ? Object.assign({}, r, { shots: r.shots.map((x, j) => j === i ? null : x) }) : r) }));
+  deleteRecord = (ymd) => {
+    if (!ymd || !window.confirm('이 날짜의 사진 기록을 지울까요? 되돌릴 수 없어요.')) return;
+    this.setState(s => ({ records: s.records.filter(r => r.ymd !== ymd), editYmd: null, lookScreen: 'home' }), () => {
+      if (this.uid && this.db) { try { this.db.collection("users").doc(this.uid).collection("app").doc("rec-" + ymd).delete().catch(() => {}); } catch (e) {} }
+    });
+  };
   openLookCompare = () => this.setState(s => { const ys = s.records.map(r => r.ymd); const slots = ys.length >= 2 ? [ys[0], ys[ys.length - 1]] : ys.slice(); return { lookScreen: 'compare', cmpN: 2, cmpSlots: slots, cmpPose: 0 }; });
   setCmpN = (n) => this.setState(s => { const ys = s.records.map(r => r.ymd); const slots = []; for (let i = 0; i < n; i++) slots.push(s.cmpSlots[i] || ys[Math.min(i, ys.length - 1)] || ys[0]); return { cmpN: n, cmpSlots: slots }; });
   setCmpPose = (i) => this.setState({ cmpPose: i });
@@ -1234,6 +1299,7 @@ class Component extends DCLogic {
       calCells: cells,
       upTitle: s.editYmd ? (this.fmtMD(s.editYmd) + ' (' + this.fmtWD(s.editYmd) + ')') : '',
       upYear: s.editYmd ? s.editYmd.split('-')[0] : '',
+      upDelete: () => this.deleteRecord(s.editYmd),
       upSlots,
       cmpN: s.cmpN,
       cmpChips: [2, 3, 4].map(n => ({ label: n + '분할', n, onClick: () => this.setCmpN(n), bg: n === s.cmpN ? '#E7A15E' : 'rgba(255,255,255,0.08)', color: n === s.cmpN ? '#0E1013' : 'rgba(255,255,255,0.72)' })),
@@ -1288,7 +1354,22 @@ class Component extends DCLogic {
   });
   toggleStep1 = () => this.toggleStep(1);
   toggleStep2 = () => this.toggleStep(2);
-  // ── 규칙 체크 = 감정과 무관한 계약 이행 · 일지에 '규칙' 발자국으로 남아요 ──
+  // ── 규칙 단계 · 확정 게이트 + 이행 체크 ──
+  confirmRules = () => this.setState(s => ({ rulesConfirmed: true, rules: (s.rules || []).map(r => Object.assign({}, r, { setAt: r.setAt || Date.now() })) }));
+  toggleRuleCheck = () => this.setState(s => ({ ruleCheckOpen: !s.ruleCheckOpen }));
+  setRuleCheck = (i, val) => this.setState(s => ({ rules: s.rules.map((r, j) => j === i ? Object.assign({}, r, { check: r.check === val ? null : val }) : r) }));
+  copyFinalRules = () => {
+    const s = this.state;
+    const lines = ['[이번 동기화 · 확정한 규칙]'];
+    (s.rules || []).forEach((r, i) => {
+      lines.push((i + 1) + '. ' + r.text + ' (' + r.tone + ' · ' + r.duration + ')');
+      if (r.checkPrompt) lines.push('   재확인: ' + r.checkPrompt);
+    });
+    lines.push('', '다음 동기화 때 이 규칙들이 지켜졌는지 확인하고, 계속 필요하면 다시 설정해줘.');
+    const txt = lines.join('\n');
+    try { navigator.clipboard.writeText(txt); this.setState({ finalCopied: true }); setTimeout(() => this.setState({ finalCopied: false }), 1800); }
+    catch (e) { window.prompt('복사할 내용:', txt); }
+  };
   toggleRule = (i) => this.setState(s => {
     const rules = s.rules.map((r, j) => j === i ? { ...r, done: !r.done } : r);
     const id = 'rule-' + i;
@@ -1402,7 +1483,14 @@ class Component extends DCLogic {
     const discoveries = (data.discoveries || []).map(d => ({ title: d.summary || d.title || d.text || '', stage: norm(d.stage), count: d.count || 0, tags: (Array.isArray(d.tags) ? d.tags.join('·') : (d.tags || d.tag)) || '', success: d.success || '', obstacle: d.obstacle || '', possibility: d.possibility || '', truth: d.truth || d.summary || d.title || '' })).filter(d => d.title);
     const qualities = [];
     (data.qualities || []).forEach(q => { const it = (typeof q === 'string') ? { text: q, tag: '자질', from: '' } : { text: q.text || q.quality || q.q || '', tag: q.type || q.tag || '자질', from: q.from || q.source || '' }; if ((it.text || '').trim()) qualities.push(it); });
-    const rulesTop = (data.rules_top3 || data.rules || []).map(r => (typeof r === 'string') ? { text: r, why: '', done: false } : { text: r.text || r.rule || '', why: r.reason || r.why || '', done: false }).filter(r => r.text);
+    let rulesTop = (data.rules_top3 || data.rules || []).map(r => (typeof r === 'string')
+      ? { text: r, why: '', tone: '제안', duration: '1주일', checkPrompt: '', done: false, check: null }
+      : { text: r.text || r.rule || '', why: r.reason || r.why || '', tone: normTone(r.tone || r.type), duration: normDur(r.duration || r.period || r.days), checkPrompt: r.check || r.check_prompt || r.recheck || r.checkin || '', done: false, check: null }
+    ).filter(r => r.text).slice(0, 3);
+    // Claude 출력엔 rules가 없을 수 있어요 · 그럴 땐 이번 동기화가 고른 자질에서 규칙을 뽑아 매번 갱신해요
+    if (!rulesTop.length && qualities.length) {
+      rulesTop = qualities.slice(0, 3).map(q => ({ text: q.text, why: q.from || '', tone: '제안', duration: '1주일', checkPrompt: (q.text || '') + ' — 오늘은 어땠어요?', done: false, check: null }));
+    }
     const reportData = data.report ? (typeof data.report === 'string' ? data.report : JSON.stringify(data.report)) : (this.state.reportData || (discoveries.length ? ('이번 동기화로 ' + discoveries.length + '개의 발견이 반영됐어요.') : null));
     const _ap = data.appearance != null ? data.appearance : (data.body_feedback != null ? data.body_feedback : data.appearance_feedback);
     const appearanceFeedback = (_ap != null) ? (typeof _ap === 'string' ? _ap : JSON.stringify(_ap)) : (this.state.appearanceFeedback || null);
@@ -1431,6 +1519,7 @@ class Component extends DCLogic {
         discoveries: discoveries.length ? discoveries : st.discoveries,
         qualities: qualities.length ? qualities : st.qualities,
         rules: rulesTop.length ? rulesTop : st.rules,
+        rulesConfirmed: rulesTop.length ? false : (st.rulesConfirmed || false),
         reportData,
         appearanceFeedback,
         qaHistory: (function(){
@@ -1448,14 +1537,14 @@ class Component extends DCLogic {
   resetAll = () => {
     if (window.confirm('모든 입력을 초기 상태로 되돌릴까요? 저장된 사진(DAY1 포함)도 지워져요.')) {
       this.stopStream();
-      // 기기에 저장된 기록 삭제 (DAY1 사진 포함)
+      // 계정에 저장된 기록 삭제
       try { localStorage.removeItem('melab-local'); } catch (e) {}
-      // 서버에 저장된 사진·기록 문서 삭제 (arch-* 사진, state, photos)
+      // 서버에 저장된 사진·기록 문서 삭제 (arch-* · rec-* 사진, state, photos)
       if (this.db && this.uid && this.uid !== 'demo') {
         try {
           const base = this.db.collection("users").doc(this.uid).collection("app");
           base.get().then(all => {
-            all.forEach(doc => { if (doc.id === "state" || doc.id === "photos" || doc.id.indexOf("arch-") === 0) doc.ref.delete().catch(() => {}); });
+            all.forEach(doc => { if (doc.id === "state" || doc.id === "photos" || doc.id.indexOf("arch-") === 0 || doc.id.indexOf("rec-") === 0) doc.ref.delete().catch(() => {}); });
           }).catch(() => {});
         } catch (e) {}
       }
@@ -1577,14 +1666,13 @@ class Component extends DCLogic {
       note: '기록',
       photos: this.state.shots.slice(),
     };
-    // 사진은 날짜별 별도 문서로 저장 (문서당 1MB 제한 대응)
+    // 사진은 로그인 시 날짜별 별도 문서로 서버에 저장 (문서당 1MB 제한 대응)
     if (this.uid && this.db) {
       const payload = JSON.parse(JSON.stringify({ dateKey, photos: session.photos }));
-      if (JSON.stringify(payload).length > 980 * 1024) {
-        window.alert('사진 용량이 커서 오늘 기록 저장이 실패할 수 있어요. 압축 품질을 낮춰 다시 업로드해 주세요.');
-      }
       const base = this.db.collection("users").doc(this.uid).collection("app");
-      base.doc("arch-" + dateKey).set(payload, { merge: true }).catch(() => {});
+      if (JSON.stringify(payload).length <= 980 * 1024) {
+        base.doc("arch-" + dateKey).set(payload, { merge: true }).catch(() => {});
+      }
     }
     this.setState(st => ({ archive: [...(st.archive || []).filter(a => a.dateKey !== dateKey), session], screen: 'home', saved: false, sub: 'archive', shots: [null, null, null, null], photo: BLANK, pose: 0 }), () => this.persist());
   };
@@ -1612,14 +1700,25 @@ class Component extends DCLogic {
         try {
           const base = this.db.collection("users").doc(u.uid).collection("app");
           const all = await base.get();
-          let d = {}; const archPhotos = {};
+          let d = {}; const archPhotos = {}; const recDocs = {};
           all.forEach(doc => {
             if (doc.id === "state" || doc.id === "photos") d = Object.assign(d, doc.data());
             else if (doc.id.indexOf("arch-") === 0) { const ad = doc.data(); if (ad && ad.dateKey) archPhotos[ad.dateKey] = ad.photos || null; }
+            else if (doc.id.indexOf("rec-") === 0) { const rd = doc.data(); if (rd && rd.ymd) recDocs[rd.ymd] = rd; }
           });
           delete d.uid; delete d.authReady; delete d.simDay; delete d.screen;
           if (!d.createdAt) d.createdAt = Date.now();
-          if (Array.isArray(d.archive)) d.archive = d.archive.map(a => a && a.dateKey && archPhotos[a.dateKey] ? Object.assign({}, a, { photos: archPhotos[a.dateKey] }) : a);
+          if (Array.isArray(d.archive)) {
+            for (let i = 0; i < d.archive.length; i++) {
+              const a = d.archive[i];
+              if (a && a.dateKey && archPhotos[a.dateKey]) d.archive[i] = Object.assign({}, a, { photos: archPhotos[a.dateKey] });
+            }
+          }
+          // 모습 사진 기록(records): 서버 rec-* 문서에서 복원
+          const serverRecs = Object.keys(recDocs).map(k => recDocs[k]);
+          if (serverRecs.length) {
+            d.records = serverRecs.sort((a, b) => a.ymd < b.ymd ? -1 : 1).map(r => ({ ymd: r.ymd, shots: Array.isArray(r.shots) ? r.shots : [null, null, null, null], filt: r.filt || undefined }));
+          }
           this.migrateLoaded(d);
           this.setState(Object.assign({}, d, { uid: u.uid, authReady: true }));
         } catch (e) { this.setState({ uid: u.uid, authReady: true }); }
@@ -1647,8 +1746,7 @@ class Component extends DCLogic {
   };
   doSignOut = () => { if (window.confirm("로그아웃할까요? 기록은 계정에 남아요.")) firebase.auth().signOut(); };
   persist() {
-    const s0 = this.state;
-    if (!this.uid || !this.db) { return; }
+    if (!this.uid || !this.db) { return; } // 기록은 로그인한 계정(Firebase)에만 저장돼요
     clearTimeout(this._pT);
     this._pT = setTimeout(() => {
       const s = this.state;
@@ -1657,10 +1755,19 @@ class Component extends DCLogic {
         notifSettings: s.notifSettings, recordOn: s.recordOn, courseStarted: s.courseStarted,
         courseDay: s.courseDay, courseDays: s.courseDays, courseLog: s.courseLog, step1: s.step1, step2: s.step2,
         archive: (s.archive || []).map(a => { const r = Object.assign({}, a); delete r.photos; return r; }), discoveries: s.discoveries, qualities: s.qualities,
-        reportData: s.reportData, appearanceFeedback: s.appearanceFeedback, syncCount: s.syncCount, createdAt: s.createdAt, dayAdj: s.dayAdj, uploadQuality: s.uploadQuality };
+        reportData: s.reportData, appearanceFeedback: s.appearanceFeedback, syncCount: s.syncCount, createdAt: s.createdAt, dayAdj: s.dayAdj, uploadQuality: s.uploadQuality,
+        rulesConfirmed: s.rulesConfirmed,
+        records: (s.records || []).map(r => ({ ymd: r.ymd, filt: r.filt || null })) };
       const base = this.db.collection("users").doc(this.uid).collection("app");
       base.doc("state").set(JSON.parse(JSON.stringify(pick)), { merge: true }).catch(() => {});
       base.doc("photos").set(JSON.parse(JSON.stringify({ shots: s.shots })), { merge: true }).catch(() => {});
+      // 모습 사진 기록은 날짜별 문서(rec-*)로 저장 — 새로고침 후에도 계정에서 복원돼요 (문서당 1MB 제한 대응)
+      (s.records || []).forEach(r => {
+        if (r && r.ymd && Array.isArray(r.shots) && r.shots.some(Boolean)) {
+          const payload = JSON.parse(JSON.stringify({ ymd: r.ymd, shots: r.shots, filt: r.filt || null }));
+          if (JSON.stringify(payload).length <= 980 * 1024) base.doc("rec-" + r.ymd).set(payload, { merge: true }).catch(() => {});
+        }
+      });
     }, 900);
   }
   setState(u, cb) { super.setState(u, () => { this.persist(); if (cb) cb(); }); }
@@ -1703,10 +1810,11 @@ class Component extends DCLogic {
     // 몸무게는 실제 등록값(weightLog)만 사용해요
     const sendCount = scInc ? incCount : fullCount;
     const simMD = (simDate.getMonth() + 1) + '/' + simDate.getDate();
-    const SYNC_BASE = [];
-    const syncNew = this.state.journalLog.map(e => Object.assign({}, e, { time: (e.ymd === this.localYmd(new Date()) ? '오늘 ' : '') + e.time, isNew: true }));
-    const syncPreview = syncNew.concat(SYNC_BASE).slice(0, 5);
-    const ANALYSIS_PROMPT = '너는 나의 심리상담가이자 행동 분석가, 조언자, 그리고 건강 코치(다이어트 트레이너)야. 이 네 역할을 한 사람처럼 자연스럽게 오가며 분석해. 공감만 하지도, 숫자만 나열하지도 마라. footprints를 요약·재분류하지 말고 근거 기반으로 분석하되, 모든 판단에 근거 발자국(id)을 인용하고 추측과 사실을 구분해.\\n\\n[대전제 — 건강하고 지속가능한 방향] 빠른 감량·굶기·체중 숫자 그 자체를 최적화 대상으로 삼지 마라. 몸과 마음의 건강, 지속가능한 습관, 나 자신에 대한 이해를 최우선에 둔다. 기록에서 의도적 굶기·허기 참기·체중 정체 불안·과식 뒤 죄책감 같은 신호가 보이면 그걸 부추기지 말고, 상담가·분석가의 시선으로 부드럽게 짚어 건강한 방향으로 돌려준다. 어떤 대화의 방향이든 분석을 회피하거나 중단하지 말고, 건강을 지키는 코칭의 형태로 반드시 결과를 JSON으로 돌려줘라. 나아가 내가 무엇을 생각하고 · 무엇에 조급해하며 · 무엇을 잘하고 · 무엇을 보완하면 좋을지를 부드러운 추천으로 함께 담아라.\\n\\n[공통 원칙] 상관과 인과를 구분한다 · 반례를 먼저 검토한다 · 근거 수로 단계를 판정한다(3회↑추정, 7회↑가능성, 12회↑높은 확률).\\n\\n[결과물별 분석]\\n1) discoveries: 시간대·요일·태그 패턴과 5 Whys로 근본 원인을 분석하되, 결과는 사람이 읽는 문장으로만 담아라. 각 발견은 { "summary": 한 줄 요약, "success": 왜 가능했나 한 문장, "obstacle": 왜 흔들렸나 한 문장, "possibility": 앞으로의 가능성 한 문장, "stage", "count", "tags" } 객체다. 판정 근거로 발자국 id를 참고하되, summary·success·obstacle·possibility 안에는 f_001 같은 id나 기록 원문을 넣지 마라.\\n2) report: 발견들을 묶어 다음 한 달의 기본·낙관·비관 시나리오와 각 방아쇠를 근거로, 트레이너·상담가의 시선이 함께 담긴 종합 3문장. 이어서 내가 지금 잘하고 있는 것 · 조급해하는 지점 · 보완하면 좋을 것을, 건강하고 지속가능한 방향의 부드러운 추천으로 덧붙여라.\\n3) qualities: 내가 명시적으로 "추구미"를 적지 않아도, 발자국과 대화 전체에서 내가 어떤 사람이 되고 싶어 하는지·어떤 방향을 원하는지를 추론해라. "너는 이런 방향(자질)을 원하는 것 같은데, 지금은 이렇게 하고 있다"는 식으로, 원하는 방향 · 현재 상태 · 그 사이의 간격 · 좁히는 법을 자질별로 제시. 각 항목은 { "text": 원하는 자질/방향, "from": 지금 상태와 간격 한 줄 } 객체.\\n4) reframe: 감정 서술엔 공감 대신 상담가·분석가의 재해석. 5 Whys로 감정의 근본 원인을 짚어 방향을 제시(나침반).\\n\\n출력은 discoveries, report, qualities, reframe를 담은 JSON만.\n\n[날짜 기준 동기화] 각 footprint에는 date(목월일)가 있다. footprints를 date별로 그룹지어 분석하고, last_synced_date 이후(아직 동기화 안 된 날짜)의 발자국만 새로 분석한다. 이미 분석된 것과 중복하지 않게 하고, 각 discovery·report에 근거로 삼은 날짜 구간(예: 7/1~7/6)을 명시한다.\n\n[분석 전 되묻기] 결과를 내기 전에, 데이터로는 알 수 없는 것(요즘 컨디션·기록에 없는 외부 요인·가장 지키기 힘들었던 것과 이유·다음 구간에 집중하고 싶은 것·내가 궁금한 점 등)을 이번 기록의 구체적 단서에 근거해 3~5개 대화로 먼저 물어봐라. 일반론이 아니라 특정 날짜·패턴·공백을 짚어서 묻고, 내 답을 받은 뒤에 분석을 진행한다. 최종 JSON에는 questions_and_answers 배열(네가 물은 질문 q + 내가 답한 요지 a)을 함께 담아 앱이 기록으로 남길 수 있게 하고, 그 답과 실제 발자국(id)을 직접 연결해 각 결과물의 근거로 삼아라. 내 답을 받은 뒤에는 곧바로 결과를 쏟아내지 말고 "동기화 결과(분석 파일)를 받으시겠어요?"라고 한 번 확인한 뒤, 내가 좋다고 하면 그때 최종 JSON을 돌려줘라.';
+    // 보낼 목록 = 동기화 범위와 동일 · 증분이면 아직 동기화 안 된 발자국만, 전체면 전부
+    const sendList = scInc ? this.state.journalLog.filter(e => !e.synced) : this.state.journalLog;
+    const syncNew = sendList.map(e => Object.assign({}, e, { time: (e.ymd === this.localYmd(new Date()) ? '오늘 ' : '') + e.time, isNew: !e.synced }));
+    const syncPreview = syncNew.slice(0, 5);
+    const ANALYSIS_PROMPT = '너는 나의 심리상담가이자 행동 분석가, 조언자, 그리고 건강 코치(다이어트 트레이너)야. 이 네 역할을 한 사람처럼 자연스럽게 오가며 분석해. 공감만 하지도, 숫자만 나열하지도 마라. footprints를 요약·재분류하지 말고 근거 기반으로 분석하되, 모든 판단에 근거 발자국(id)을 인용하고 추측과 사실을 구분해.\\n\\n[대전제 — 건강하고 지속가능한 방향] 빠른 감량·굶기·체중 숫자 그 자체를 최적화 대상으로 삼지 마라. 몸과 마음의 건강, 지속가능한 습관, 나 자신에 대한 이해를 최우선에 둔다. 기록에서 의도적 굶기·허기 참기·체중 정체 불안·과식 뒤 죄책감 같은 신호가 보이면 그걸 부추기지 말고, 상담가·분석가의 시선으로 부드럽게 짚어 건강한 방향으로 돌려준다. 어떤 대화의 방향이든 분석을 회피하거나 중단하지 말고, 건강을 지키는 코칭의 형태로 반드시 결과를 JSON으로 돌려줘라. 나아가 내가 무엇을 생각하고 · 무엇에 조급해하며 · 무엇을 잘하고 · 무엇을 보완하면 좋을지를 부드러운 추천으로 함께 담아라.\\n\\n[공통 원칙] 상관과 인과를 구분한다 · 반례를 먼저 검토한다 · 근거 수로 단계를 판정한다(3회↑추정, 7회↑가능성, 12회↑높은 확률).\\n\\n[결과물별 분석]\\n1) discoveries: 시간대·요일·태그 패턴과 5 Whys로 근본 원인을 분석하되, 결과는 사람이 읽는 문장으로만 담아라. 각 발견은 { "summary": 한 줄 요약, "success": 왜 가능했나 한 문장, "obstacle": 왜 흔들렸나 한 문장, "possibility": 앞으로의 가능성 한 문장, "stage", "count", "tags" } 객체다. 판정 근거로 발자국 id를 참고하되, summary·success·obstacle·possibility 안에는 f_001 같은 id나 기록 원문을 넣지 마라.\\n2) report: 발견들을 묶어 다음 한 달의 기본·낙관·비관 시나리오와 각 방아쇠를 근거로, 트레이너·상담가의 시선이 함께 담긴 종합 3문장. 이어서 내가 지금 잘하고 있는 것 · 조급해하는 지점 · 보완하면 좋을 것을, 건강하고 지속가능한 방향의 부드러운 추천으로 덧붙여라.\\n3) qualities: 내가 명시적으로 "추구미"를 적지 않아도, 발자국과 대화 전체에서 내가 어떤 사람이 되고 싶어 하는지·어떤 방향을 원하는지를 추론해라. "너는 이런 방향(자질)을 원하는 것 같은데, 지금은 이렇게 하고 있다"는 식으로, 원하는 방향 · 현재 상태 · 그 사이의 간격 · 좁히는 법을 자질별로 제시. 각 항목은 { "text": 원하는 자질/방향, "from": 지금 상태와 간격 한 줄 } 객체.\\n4) reframe: 감정 서술엔 공감 대신 상담가·분석가의 재해석. 5 Whys로 감정의 근본 원인을 짚어 방향을 제시(나침반).\\n\\n출력은 discoveries, report, qualities, reframe, 그리고 rules를 담은 JSON만.\n\n5) rules: 위 되묻기 답변을 받은 뒤 앞으로 지켜볼 규칙을 최대 3개 제안. 각 규칙은 {text, why(근거·인용 id), tone: 제안|문제|직면 중 근거로 판단해 하나, duration: 3일|1주일|상시, check: 다음 동기화 때 되물을 재확인 질문 한 문장}. 입력의 rules_previous가 있으면 각 규칙이 지켜졌는지(kept)를 먼저 짚고, 계속 필요한 규칙은 다시 설정해 담아라.\n\n[날짜 기준 동기화] 각 footprint에는 date(목월일)가 있다. footprints를 date별로 그룹지어 분석하고, last_synced_date 이후(아직 동기화 안 된 날짜)의 발자국만 새로 분석한다. 이미 분석된 것과 중복하지 않게 하고, 각 discovery·report에 근거로 삼은 날짜 구간(예: 7/1~7/6)을 명시한다.\n\n[분석 전 되묻기] 결과를 내기 전에, 데이터로는 알 수 없는 것(요즘 컨디션·기록에 없는 외부 요인·가장 지키기 힘들었던 것과 이유·다음 구간에 집중하고 싶은 것·내가 궁금한 점 등)을 이번 기록의 구체적 단서에 근거해 3~5개 대화로 먼저 물어봐라. 일반론이 아니라 특정 날짜·패턴·공백을 짚어서 묻고, 내 답을 받은 뒤에 분석을 진행한다. 최종 JSON에는 questions_and_answers 배열(네가 물은 질문 q + 내가 답한 요지 a)을 함께 담아 앱이 기록으로 남길 수 있게 하고, 그 답과 실제 발자국(id)을 직접 연결해 각 결과물의 근거로 삼아라. 내 답을 받은 뒤에는 곧바로 결과를 쏟아내지 말고 "동기화 결과(분석 파일)를 받으시겠어요?"라고 한 번 확인한 뒤, 내가 좋다고 하면 그때 최종 JSON을 돌려줘라.';
 
     const s = this.state, p = POSES[s.pose] || POSES[0];
     const cp = POSES[s.comparePose] || POSES[0];
@@ -1778,7 +1886,7 @@ class Component extends DCLogic {
       anaSyncBg: s.anaTab === 'sync' ? '#3D5AA0' : 'transparent',
       anaSyncColor: s.anaTab === 'sync' ? '#F6F1E6' : '#7A7260',
       aspCount: s.aspirations.length,
-      // ── 나 탭 · 돌아보기/나아가기/질문·답 서브탭 ──
+      // ── 발견 탭 · 돌아보기/나아가기/질문·답 서브탭 ──
       meBack: s.meTab === 'back',
       meForward: s.meTab === 'forward',
       meQA: s.meTab === 'qa',
@@ -2384,9 +2492,29 @@ class Component extends DCLogic {
       syncFootInVal: String(s.syncFootIn || (s.journalLog || []).length),
       syncNewVal: '+' + (s.syncNewCount || 0),
       syncStageUpVal: String(s.syncStageUp || 0),
-      syncRuleRows: (s.rules || []).map(r => ({ text: r.text, why: r.why || '' })),
+      syncRuleRows: (s.rules || []).map(r => { const tm = TONE_META[r.tone] || TONE_META['제안']; return { text: r.text, why: r.why || '', toneLabel: tm.label, toneBg: tm.bg, toneColor: tm.color, toneDot: tm.dot, duration: r.duration || '1주일', checkPrompt: r.checkPrompt || '', hasCheck: !!r.checkPrompt }; }),
       hasSyncRules: (s.rules || []).length > 0,
       syncRuleCount: (s.rules || []).length,
+      rulesConfirmed: s.rulesConfirmed,
+      rulesProposed: (s.rules || []).length > 0 && !s.rulesConfirmed,
+      ruleHeadLabel: s.rulesConfirmed ? '지금의 규칙' : '규칙 제안',
+      ruleHeadNote: s.rulesConfirmed ? ('동기화가 고른 ' + (s.rules || []).length + '개') : 'Claude가 제안했어요 · 확정하면 적용돼요',
+      confirmRules: this.confirmRules,
+      copyFinalRules: this.copyFinalRules,
+      finalCopied: s.finalCopied,
+      finalCopyLabel: s.finalCopied ? '복사됨!' : '최종 내용 복사',
+      // ── 일지 탭 · 규칙 이행 체크 (여닫이) ──
+      hasActiveRules: (s.rules || []).length > 0 && s.rulesConfirmed,
+      ruleCheckOpen: s.ruleCheckOpen,
+      toggleRuleCheck: this.toggleRuleCheck,
+      ruleCheckChevron: s.ruleCheckOpen ? '180deg' : '0deg',
+      ruleCheckSummary: (() => { const rs = s.rules || []; const kept = rs.filter(r => r.check === '지킴').length; return rs.length + '개 중 ' + kept + '개 지킴'; })(),
+      ruleCheckRows: (s.rules || []).map((r, i) => { const tm = TONE_META[r.tone] || TONE_META['제안']; const kept = r.check === '지킴', broke = r.check === '못지킴'; return {
+        text: r.text, toneLabel: tm.label, toneBg: tm.bg, toneColor: tm.color, duration: r.duration || '1주일', checkPrompt: r.checkPrompt || '', hasPrompt: !!r.checkPrompt,
+        keptBg: kept ? '#7FB287' : 'transparent', keptColor: kept ? '#fff' : '#4E6E54', keptBorder: kept ? '#7FB287' : 'rgba(78,110,84,0.4)',
+        brokeBg: broke ? '#C98A6A' : 'transparent', brokeColor: broke ? '#fff' : '#B4736A', brokeBorder: broke ? '#C98A6A' : 'rgba(180,115,106,0.4)',
+        onKeep: () => this.setRuleCheck(i, '지킴'), onBreak: () => this.setRuleCheck(i, '못지킴'),
+      }; }),
       syncBullets: (() => {
         const b = [];
         (s.syncUpList || []).forEach(u => b.push({ tag: '단계↑', tagBg: 'rgba(217,138,90,0.18)', tagColor: '#E0996B', text: u.title, sub: u.from + ' → ' + u.to }));
@@ -2572,9 +2700,11 @@ class Component extends DCLogic {
           footprints: foot,
           weights: (this.state.weightLog || []).map(w => ({ date: w.ymd, kg: w.kg })),
           discoveries: (this.state.discoveries || []).map((d, i) => ({ id: 'd_' + i, text: d.title || d.text, stage: d.stage, count: d.count || 0 })),
+          rules_previous: (this.state.rules || []).map(r => ({ text: r.text, tone: r.tone || '제안', duration: r.duration || '1주일', check_prompt: r.checkPrompt || '', kept: r.check === '지킴' ? true : (r.check === '못지킴' ? false : null), set_days_ago: r.setAt ? Math.floor((Date.now() - r.setAt) / 864e5) : null })),
           expected_output: (() => {
             const eo = { questions_and_answers: '분석 전에 대화로 나에게 물어본 질문(q)과 내가 그때 답한 요지(a)의 배열 — 앱이 기록으로 남긴다', discoveries: '발견별 성공·방해 요인+가능성 근거+인용 id', report: '기본/낙관/비관 시나리오 근거 종합 판단 3문장', qualities: '발자국·대화에서 추론한 원하는 방향(자질)+현재 상태와의 간격' };
             eo.reframe = '감정의 분석적 재해석+근본원인(5Whys)';
+            eo.rules = '되묻기 답변 뒤에 제안하는 규칙 최대 3개 배열. 각 규칙은 {text, why(근거·인용 id), tone(제안|문제|직면 중 근거로 골라), duration(3일|1주일|상시), check(다음 동기화 때 되물을 재확인 질문 한 문장)}. rules_previous가 있으면 kept 여부를 먼저 짚고, 계속 필요한 규칙은 다시 설정(재설정)해 담아라.';
             return eo;
           })(),
         };
