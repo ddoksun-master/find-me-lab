@@ -1282,10 +1282,10 @@ class Component extends DCLogic {
       if (this.uid && this.db) { try { this.db.collection("users").doc(this.uid).collection("app").doc("rec-" + ymd).delete().catch(() => {}); } catch (e) {} }
     });
   };
-  openLookCompare = () => this.setState(s => { const ys = s.records.map(r => r.ymd); const slots = ys.length >= 2 ? [ys[0], ys[ys.length - 1]] : ys.slice(); return { lookScreen: 'compare', cmpN: 2, cmpSlots: slots, cmpPose: 0 }; });
-  setCmpN = (n) => this.setState(s => { const ys = s.records.map(r => r.ymd); const slots = []; for (let i = 0; i < n; i++) slots.push(s.cmpSlots[i] || ys[Math.min(i, ys.length - 1)] || ys[0]); return { cmpN: n, cmpSlots: slots }; });
-  setCmpPose = (i) => this.setState({ cmpPose: i });
-  setCmpSlot = (i) => (e) => this.setState(s => { const cs = s.cmpSlots.slice(); cs[i] = e.target.value; return { cmpSlots: cs }; });
+  openLookCompare = () => this.setState(s => { const ys = s.records.map(r => r.ymd); const slots = ys.length >= 2 ? [ys[0], ys[ys.length - 1]] : ys.slice(); return { lookScreen: 'compare', cmpN: 2, cmpSlots: slots, cmpPose: 0 }; }, () => this.buildCollage());
+  setCmpN = (n) => this.setState(s => { const ys = s.records.map(r => r.ymd); const slots = []; for (let i = 0; i < n; i++) slots.push(s.cmpSlots[i] || ys[Math.min(i, ys.length - 1)] || ys[0]); return { cmpN: n, cmpSlots: slots }; }, () => this.buildCollage());
+  setCmpPose = (i) => this.setState({ cmpPose: i }, () => this.buildCollage());
+  setCmpSlot = (i) => (e) => { const v = e.target.value; this.setState(s => { const cs = s.cmpSlots.slice(); cs[i] = v; return { cmpSlots: cs }; }, () => this.buildCollage()); };
   fmtMD(ymd){ const p = (ymd || '').split('-'); return (+p[1]) + '/' + (+p[2]); }
   fmtWD(ymd){ const p = (ymd || '').split('-').map(Number); return WD_KR[new Date(p[0], p[1] - 1, p[2]).getDay()]; }
   lookVals(s){
