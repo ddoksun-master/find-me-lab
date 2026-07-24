@@ -316,19 +316,17 @@ body{background:#0A1322;font-family:'IBM Plex Sans KR',system-ui,sans-serif;-web
             <sc-if value="{{ isCode }}" hint-placeholder-val="{{ true }}">
             <div style="background:#0B1220;border-radius:14px;padding:13px 14px;margin-top:10px;position:relative;overflow:hidden">
               <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:#8FA890;line-height:1.7;white-space:pre;overflow:hidden;text-overflow:ellipsis">{
-  <span style="color:#C9A24B">"instruction"</span>: <span style="color:#D9A38A">"건강·지속가능 코치로서(깠기·강박은</span>
-    <span style="color:#D9A38A">  부추기지 않고 부드럽게 돌려줌):</span>
+  <span style="color:#C9A24B">"instruction"</span>: <span style="color:#D9A38A">"내 일지를 함께 되짚는 회고 파트너로서</span>
+    <span style="color:#D9A38A">  (진단 아님 · 건강·지속가능 우선 ·</span>
+    <span style="color:#D9A38A">  민감 신호는 거절 않고 건강 쪽으로):</span>
     <span style="color:#D9A38A">· 공통: 상관≠인과 · 반례 먼저 ·</span>
     <span style="color:#D9A38A">  근거 수로 단계 판정</span>
-    <span style="color:#D9A38A">① discoveries: 패턴+5Whys로 성공·방해</span>
-    <span style="color:#D9A38A">  요인과 가능성을 근거·id로</span>
+    <span style="color:#D9A38A">① discoveries: 행동 패턴을 근거·id로</span>
     <span style="color:#D9A38A">② report: 기본/낙관/비관 시나리오</span>
-    <span style="color:#D9A38A">  근거로 종합 판단 3문장</span>
-    <span style="color:#D9A38A">③ qualities: 대화·발자국에서 원하는</span>
-    <span style="color:#D9A38A">  방향 추론 + 현재와의 간격</span>
-    <span style="color:#D9A38A">④ reframe: 감정 근본원인(5Whys)으로</span>
-    <span style="color:#D9A38A">⑤ rules: 되묻기 뒤 규칙 최대 3개</span>
-    <span style="color:#D9A38A">  (톤·기간·재확인 질문 포함)</span>
+    <span style="color:#D9A38A">③ shortfalls: 부족+건강한 대안</span>
+    <span style="color:#D9A38A">④ qualities: 내가 드러낸 방향 되비춤</span>
+    <span style="color:#D9A38A">⑤ reframe: 판단 없이 다른 각도로</span>
+    <span style="color:#D9A38A">⑥ rules: 규칙 최대 3개(제한 금지)</span>
     <span style="color:#D9A38A">⊕ 잘하는 것·조급한 지점·보완점</span>
     <span style="color:#D9A38A">  추천 · 질문 뒤 확인 후 JSON"</span>,
   <span style="color:#C9A24B">"scope"</span>: <span style="color:#D9A38A">"{{ scopeCode }}"</span>,
@@ -340,11 +338,12 @@ body{background:#0A1322;font-family:'IBM Plex Sans KR',system-ui,sans-serif;-web
   <span style="color:#C9A24B">"discoveries"</span>: [<sc-if value="{{ codeDiscEmpty }}" hint-placeholder-val="{{ true }}"> ]</sc-if><sc-if value="{{ codeDiscHas }}" hint-placeholder-val="{{ false }}">
     { <span style="color:#C9A24B">"id"</span>:<span style="color:#D9A38A">"{{ codeDiscId }}"</span>, <span style="color:#C9A24B">"stage"</span>:<span style="color:#D9A38A">"{{ codeDiscStage }}"</span>,
       <span style="color:#C9A24B">"count"</span>:<span style="color:#8FB2D9">{{ codeDiscCount }}</span> } ]</sc-if>,
-  <span style="color:#C9A24B">"expected_output"</span>: { <span style="color:#C9A24B">"discoveries"</span>:<span style="color:#D9A38A">"성공·방해 요인+가능성"</span>,
+  <span style="color:#C9A24B">"expected_output"</span>: { <span style="color:#C9A24B">"discoveries"</span>:<span style="color:#D9A38A">"행동 패턴 발견(id 유지)"</span>,
     <span style="color:#C9A24B">"report"</span>:<span style="color:#D9A38A">"시나리오 근거 종합 3문장"</span>,
-    <span style="color:#C9A24B">"qualities"</span>:<span style="color:#D9A38A">"원하는 방향+현재 간격"</span>,
-    <span style="color:#C9A24B">"reframe"</span>:<span style="color:#D9A38A">"감정 재해석+근본원인"</span>,
-    <span style="color:#C9A24B">"rules"</span>:<span style="color:#D9A38A">"규칙3(톤·기간·재확인)"</span> }
+    <span style="color:#C9A24B">"shortfalls"</span>:<span style="color:#D9A38A">"부족+건강한 대안"</span>,
+    <span style="color:#C9A24B">"qualities"</span>:<span style="color:#D9A38A">"내가 드러낸 방향+간격"</span>,
+    <span style="color:#C9A24B">"reframe"</span>:<span style="color:#D9A38A">"판단 없이 다른 각도"</span>,
+    <span style="color:#C9A24B">"rules"</span>:<span style="color:#D9A38A">"규칙3(제한 금지)"</span> }
 }</div>
               <div style="position:absolute;bottom:0;left:0;right:0;height:34px;background:linear-gradient(transparent,#0B1220)"></div>
             </div>
@@ -762,19 +761,18 @@ body{background:#0A1322;font-family:'IBM Plex Sans KR',system-ui,sans-serif;-web
 
             
             </sc-if>
-            <sc-if value="{{ hasReport }}" hint-placeholder-val="{{ false }}">
-            <!-- 부족했던 것 · 다시 해보기 제안 -->
+            <sc-if value="{{ hasShortfalls }}" hint-placeholder-val="{{ false }}">
+            <!-- 부족했던 것 · 다시 해보기 제안 (동기화 데이터 기반) -->
             <div style="margin-top:18px;display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;letter-spacing:0.06em;color:#BC6B43"><svg width="13" viewBox="0 0 24 24" fill="none"><path d="M4 9a8 8 0 0113-3l2 2" stroke="#BC6B43" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path><path d="M19 4v4h-4" stroke="#BC6B43" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path><path d="M12 21a8 8 0 008-8" stroke="#BC6B43" stroke-width="1.7" stroke-linecap="round"></path></svg>부족했던 것 · 다시 이렇게 해볼까요</div>
+            <sc-for list="{{ shortfallRows }}" as="sf" hint-placeholder-count="2">
             <div style="background:linear-gradient(180deg,#F6F1E6,#EFE7D3);border:1px solid rgba(188,107,67,0.4);border-radius:16px;padding:14px;margin-top:11px;box-shadow:0 1px 3px rgba(28,43,75,0.1)">
-              <div style="display:flex;gap:8px;align-items:flex-start"><span style="flex-shrink:0;padding:2px 8px;border-radius:999px;background:rgba(224,153,107,0.18);color:#E0996B;font-size:9.5px;font-weight:700;margin-top:2px">부족</span><span style="font-size:12px;color:#6B6250;line-height:1.55">밤 11시 취침이 이번 주 3번 무너졌어요 — 모두 <b style="color:#3A4150;font-weight:600">야근한 날</b>이었어요.</span></div>
+              <div style="display:flex;gap:8px;align-items:flex-start"><span style="flex-shrink:0;padding:2px 8px;border-radius:999px;background:rgba(224,153,107,0.18);color:#E0996B;font-size:9.5px;font-weight:700;margin-top:2px">부족</span><span style="font-size:12px;color:#6B6250;line-height:1.55">{{ sf.lack }}</span></div>
+              <sc-if value="{{ sf.hasSuggestion }}" hint-placeholder-val="{{ true }}">
               <div style="display:flex;justify-content:center;margin:9px 0"><svg width="14" viewBox="0 0 24 24" fill="none"><path d="M12 4v14m0 0l-5-5m5 5l5-5" stroke="#A89F88" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
-              <div style="display:flex;gap:8px;align-items:flex-start;background:rgba(188,107,67,0.10);border-radius:11px;padding:10px 11px"><span style="flex-shrink:0;padding:2px 8px;border-radius:999px;background:#BC6B43;color:#fff;font-size:9.5px;font-weight:700;margin-top:2px">제안</span><span style="font-size:12px;color:#3A4150;line-height:1.55">다시 이렇게 해보면 어때요 — 야근한 날은 ‘11시 취침’ 대신 <b style="color:#BC6B43;font-weight:600">‘12시 전 소등’</b>으로 낮춰서 지켜봐요.</span></div>
+              <div style="display:flex;gap:8px;align-items:flex-start;background:rgba(188,107,67,0.10);border-radius:11px;padding:10px 11px"><span style="flex-shrink:0;padding:2px 8px;border-radius:999px;background:#BC6B43;color:#fff;font-size:9.5px;font-weight:700;margin-top:2px">제안</span><span style="font-size:12px;color:#3A4150;line-height:1.55">{{ sf.suggestion }}</span></div>
+              </sc-if>
             </div>
-            <div style="background:linear-gradient(180deg,#F6F1E6,#EFE7D3);border:1px solid rgba(188,107,67,0.4);border-radius:16px;padding:14px;margin-top:9px;box-shadow:0 1px 3px rgba(28,43,75,0.1)">
-              <div style="display:flex;gap:8px;align-items:flex-start"><span style="flex-shrink:0;padding:2px 8px;border-radius:999px;background:rgba(224,153,107,0.18);color:#E0996B;font-size:9.5px;font-weight:700;margin-top:2px">부족</span><span style="font-size:12px;color:#6B6250;line-height:1.55">주말엔 걷기가 이틀 다 멈췄어요. 강도가 아니라 <b style="color:#3A4150;font-weight:600">시작 자체가 없었어요.</b></span></div>
-              <div style="display:flex;justify-content:center;margin:9px 0"><svg width="14" viewBox="0 0 24 24" fill="none"><path d="M12 4v14m0 0l-5-5m5 5l5-5" stroke="#A89F88" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"></path></svg></div>
-              <div style="display:flex;gap:8px;align-items:flex-start;background:rgba(188,107,67,0.10);border-radius:11px;padding:10px 11px"><span style="flex-shrink:0;padding:2px 8px;border-radius:999px;background:#BC6B43;color:#fff;font-size:9.5px;font-weight:700;margin-top:2px">제안</span><span style="font-size:12px;color:#3A4150;line-height:1.55">일요일 저녁 <b style="color:#BC6B43;font-weight:600">10분 산책</b> 하나만 걸어두면, 월요일의 시작 장벽이 낮아질지도 몰라요.</span></div>
-            </div>
+            </sc-for>
             <div style="font-size:11px;color:#8A8272;margin-top:13px;line-height:1.55;text-align:center">여기 있는 건 아직 단정이 아니라 제안이에요.<br>해보고 맞으면, 확신이 되어 ‘나아가기’로 올라가요.</div>
             </sc-if>
             <div style="height:14px"></div>
@@ -1034,7 +1032,7 @@ const INITIAL_STATE = () => ({ syncView: 'preview', copied: false,
             wishes: WISH_SEED.slice(), wishSheet: false, wishText: '',
             rules: RULES_SEED.slice(),
             recordOn: { '수면': true, '행동 패턴': true, '식사 + 몸 반응': true, '기억될 모습(사진)': true, '감정': true },
-            remindIdx: 1, exported: false, anaTab: 'review', meTab: 'back', reportSheet: false, oneTab: 2, journalView: 'log', notifPhase: 'am', entryYmd: '', contextAnswers: {}, syncStage: 'ask', syncQuestions: [], syncAnswers: {}, qaHistory: [], archive: [], discoveries: DISC_SEED.slice(), qualities: [], reportData: null, appearanceFeedback: null, syncCount: 0, createdAt: null, dateFilter: '', collapsedDates: {}, lastSyncAt: null, lastSyncYmd: '', syncNewCount: 0, syncStageUp: 0, syncFootIn: 0, syncUpList: [], syncNewList: [], lookScreen: 'home', calY: null, calM: null, editYmd: null, cmpN: 2, cmpSlots: [], cmpPose: 0, collageUrl: null, rulesConfirmed: false, ruleCheckOpen: false, records: SEED_RECORDS() });
+            remindIdx: 1, exported: false, anaTab: 'review', meTab: 'back', reportSheet: false, oneTab: 2, journalView: 'log', notifPhase: 'am', entryYmd: '', contextAnswers: {}, syncStage: 'ask', syncQuestions: [], syncAnswers: {}, qaHistory: [], archive: [], discoveries: DISC_SEED.slice(), qualities: [], reportData: null, shortfalls: [], appearanceFeedback: null, syncCount: 0, createdAt: null, dateFilter: '', collapsedDates: {}, lastSyncAt: null, lastSyncYmd: '', syncNewCount: 0, syncStageUp: 0, syncFootIn: 0, syncUpList: [], syncNewList: [], lookScreen: 'home', calY: null, calM: null, editYmd: null, cmpN: 2, cmpSlots: [], cmpPose: 0, collageUrl: null, rulesConfirmed: false, ruleCheckOpen: false, records: SEED_RECORDS() });
 
 // ─────────────────────────────────────────────────────────────
 // Firebase 데이터 구조 (설계만 — 아직 미연결, 나중에 그대로 연결)
@@ -1533,7 +1531,7 @@ class Component extends DCLogic {
     catch (e) { window.alert('JSON 형식을 읽지 못했어요. Claude가 준 결과 전체를 그대로 붙여넣어 주세요.'); return; }
     const STAGES = ['추정', '가능성', '높은 확률', '관찰 중'];
     const norm = (v) => STAGES.includes(v) ? v : '추정';
-    const discoveries = (data.discoveries || []).map(d => ({ title: d.summary || d.title || d.text || '', stage: norm(d.stage), count: d.count || 0, tags: (Array.isArray(d.tags) ? d.tags.join('·') : (d.tags || d.tag)) || '', success: d.success || '', obstacle: d.obstacle || '', possibility: d.possibility || '', truth: d.truth || d.summary || d.title || '' })).filter(d => d.title);
+    const discoveries = (data.discoveries || []).map(d => ({ id: d.id || d.key || '', title: d.summary || d.title || d.text || '', stage: norm(d.stage), count: d.count || 0, tags: (Array.isArray(d.tags) ? d.tags.join('·') : (d.tags || d.tag)) || '', success: d.success || '', obstacle: d.obstacle || '', possibility: d.possibility || '', truth: d.truth || d.summary || d.title || '' })).filter(d => d.title);
     const qualities = [];
     (data.qualities || []).forEach(q => { const it = (typeof q === 'string') ? { text: q, tag: '자질', from: '' } : { text: q.text || q.quality || q.q || '', tag: q.type || q.tag || '자질', from: q.from || q.source || '' }; if ((it.text || '').trim()) qualities.push(it); });
     let rulesTop = (data.rules_top3 || data.rules || []).map(r => (typeof r === 'string')
@@ -1547,17 +1545,62 @@ class Component extends DCLogic {
     const reportData = data.report ? (typeof data.report === 'string' ? data.report : JSON.stringify(data.report)) : (this.state.reportData || (discoveries.length ? ('이번 동기화로 ' + discoveries.length + '개의 발견이 반영됐어요.') : null));
     const _ap = data.appearance != null ? data.appearance : (data.body_feedback != null ? data.body_feedback : data.appearance_feedback);
     const appearanceFeedback = (_ap != null) ? (typeof _ap === 'string' ? _ap : JSON.stringify(_ap)) : (this.state.appearanceFeedback || null);
+    const shortfalls = (data.shortfalls || data.retry || data.retries || []).map(x => (typeof x === 'string') ? { lack: x, suggestion: '' } : { lack: x.lack || x.short || x.shortfall || x.text || '', suggestion: x.suggestion || x.retry || x.alt || x.try || '' }).filter(x => x.lack).slice(0, 3);
     const sIdxA = (v) => v === '높은 확률' ? 3 : v === '가능성' ? 2 : v === '추정' ? 1 : 0;
+    const stageFromCount = (c) => c >= 12 ? '높은 확률' : c >= 7 ? '가능성' : c >= 3 ? '추정' : '관찰 중';
+    const maxStage = (a, b) => sIdxA(a) >= sIdxA(b) ? a : b;
+    const normTitle = (t) => (t || '').replace(/\s+/g, '').toLowerCase();
+    const mkId = () => 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    const scInc = this.state.syncScope === 'inc';
     const now = Date.now();
     this.setState(st => {
-      const finalDisc = discoveries.length ? discoveries : (st.discoveries || []);
-      const prevMap = {}; (st.discoveries || []).forEach(d => { prevMap[d.title] = d.stage; });
+      const prev = (st.discoveries || []).map(d => Object.assign({}, d, { id: d.id || mkId() }));
       let newCount = 0, stageUp = 0; const upList = [], newList = [];
-      finalDisc.forEach(d => {
-        const old = prevMap[d.title];
-        if (old == null) { newCount++; newList.push({ title: d.title, stage: d.stage, count: d.count || 0 }); }
-        else if (sIdxA(d.stage) > sIdxA(old)) { stageUp++; upList.push({ title: d.title, from: old, to: d.stage }); }
-      });
+      // 이전 발견 조회용 색인 (id 우선 · 제목 정규화 보조)
+      const idxOf = {}; prev.forEach((d, i) => { idxOf['i:' + d.id] = i; idxOf['t:' + normTitle(d.title)] = i; });
+      const findPrev = (d) => {
+        if (d.id && idxOf['i:' + d.id] != null) return idxOf['i:' + d.id];
+        const t = idxOf['t:' + normTitle(d.title)]; return (t != null) ? t : -1;
+      };
+      let finalDisc;
+      if (!discoveries.length) {
+        finalDisc = prev;
+      } else if (!scInc) {
+        // 전체 다시: 새 분석으로 교체하되 id는 이전 것과 매칭해 유지 (신규/단계상승은 표시용 집계)
+        finalDisc = discoveries.map(d => {
+          const pi = findPrev(d);
+          const id = (pi >= 0) ? prev[pi].id : (d.id || mkId());
+          const count = d.count || 0;
+          const stage = maxStage(d.stage, stageFromCount(count));
+          if (pi < 0) { newCount++; newList.push({ title: d.title, stage: stage, count: count }); }
+          else if (sIdxA(stage) > sIdxA(prev[pi].stage)) { stageUp++; upList.push({ title: d.title, from: prev[pi].stage, to: stage }); }
+          return Object.assign({}, d, { id: id, count: count, stage: stage });
+        });
+      } else {
+        // 증분: id(보조로 제목) 기준 누적 — 관찰 수 합산, 누적 수·이번 판정 중 더 높은 단계 채택
+        const merged = prev.slice();
+        discoveries.forEach(d => {
+          const pi = findPrev(d);
+          if (pi < 0) {
+            const nd = Object.assign({}, d, { id: d.id || mkId(), count: d.count || 0 });
+            nd.stage = maxStage(d.stage, stageFromCount(nd.count));
+            const ni = merged.length; merged.push(nd);
+            idxOf['i:' + nd.id] = ni; idxOf['t:' + normTitle(nd.title)] = ni;
+            newCount++; newList.push({ title: nd.title, stage: nd.stage, count: nd.count });
+          } else {
+            const cur = merged[pi]; const oldStage = cur.stage;
+            cur.count = (cur.count || 0) + (d.count || 0);
+            const ns = maxStage(maxStage(cur.stage, d.stage), stageFromCount(cur.count));
+            if (sIdxA(ns) > sIdxA(cur.stage)) { cur.stage = ns; stageUp++; upList.push({ title: cur.title, from: oldStage, to: ns }); }
+            if (d.success) cur.success = d.success;
+            if (d.obstacle) cur.obstacle = d.obstacle;
+            if (d.possibility) cur.possibility = d.possibility;
+            if (d.tags) cur.tags = d.tags;
+            if (d.truth) cur.truth = d.truth;
+          }
+        });
+        finalDisc = merged;
+      }
       // 이번에 반영된(=아직 동기화 안 된) 발자국 수 · 없으면 전체
       const unsynced = (st.journalLog || []).filter(e => !e.synced);
       const footIn = unsynced.length || (st.journalLog || []).length;
@@ -1569,11 +1612,12 @@ class Component extends DCLogic {
         lastSyncAt: now,
         lastSyncYmd: this.localYmd(new Date(now)),
         journalLog,
-        discoveries: discoveries.length ? discoveries : st.discoveries,
+        discoveries: finalDisc,
         qualities: qualities.length ? qualities : st.qualities,
         rules: rulesTop.length ? rulesTop : st.rules,
         rulesConfirmed: rulesTop.length ? false : (st.rulesConfirmed || false),
         reportData,
+        shortfalls: shortfalls.length ? shortfalls : (st.shortfalls || []),
         appearanceFeedback,
         qaHistory: (function(){
           var qa = data.questions_and_answers || data.qa || null;
@@ -1648,7 +1692,7 @@ class Component extends DCLogic {
       journalLog: s.journalLog, weightLog: s.weightLog, scoreLog: s.scoreLog, archive: s.archive, shots: s.shots,
       wishes: s.wishes, rules: s.rules, aspirations: s.aspirations, notifSettings: s.notifSettings, recordOn: s.recordOn,
       courseStarted: s.courseStarted, courseDay: s.courseDay, courseDays: s.courseDays, courseLog: s.courseLog, step1: s.step1, step2: s.step2,
-      discoveries: s.discoveries, qualities: s.qualities, reportData: s.reportData, syncCount: s.syncCount, syncApplied: s.syncApplied,
+      discoveries: s.discoveries, qualities: s.qualities, reportData: s.reportData, shortfalls: s.shortfalls, syncCount: s.syncCount, syncApplied: s.syncApplied,
       createdAt: s.createdAt, dayAdj: s.dayAdj, uploadQuality: s.uploadQuality, scores: s.scores, mirror: s.mirror, weightVal: s.weightVal,
     } };
     const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
@@ -1808,7 +1852,7 @@ class Component extends DCLogic {
         notifSettings: s.notifSettings, recordOn: s.recordOn, courseStarted: s.courseStarted,
         courseDay: s.courseDay, courseDays: s.courseDays, courseLog: s.courseLog, step1: s.step1, step2: s.step2,
         archive: (s.archive || []).map(a => { const r = Object.assign({}, a); delete r.photos; return r; }), discoveries: s.discoveries, qualities: s.qualities,
-        reportData: s.reportData, appearanceFeedback: s.appearanceFeedback, syncCount: s.syncCount, createdAt: s.createdAt, dayAdj: s.dayAdj, uploadQuality: s.uploadQuality,
+        reportData: s.reportData, shortfalls: s.shortfalls, appearanceFeedback: s.appearanceFeedback, syncCount: s.syncCount, createdAt: s.createdAt, dayAdj: s.dayAdj, uploadQuality: s.uploadQuality,
         rulesConfirmed: s.rulesConfirmed,
         records: (s.records || []).map(r => ({ ymd: r.ymd, filt: r.filt || null })) };
       const base = this.db.collection("users").doc(this.uid).collection("app");
@@ -1867,7 +1911,7 @@ class Component extends DCLogic {
     const sendList = scInc ? this.state.journalLog.filter(e => !e.synced) : this.state.journalLog;
     const syncNew = sendList.map(e => Object.assign({}, e, { time: (e.ymd === this.localYmd(new Date()) ? '오늘 ' : '') + e.time, isNew: !e.synced }));
     const syncPreview = syncNew.slice(0, 5);
-    const ANALYSIS_PROMPT = '너는 나의 심리상담가이자 행동 분석가, 조언자, 그리고 건강 코치(다이어트 트레이너)야. 이 네 역할을 한 사람처럼 자연스럽게 오가며 분석해. 공감만 하지도, 숫자만 나열하지도 마라. footprints를 요약·재분류하지 말고 근거 기반으로 분석하되, 모든 판단에 근거 발자국(id)을 인용하고 추측과 사실을 구분해.\\n\\n[대전제 — 건강하고 지속가능한 방향] 빠른 감량·굶기·체중 숫자 그 자체를 최적화 대상으로 삼지 마라. 몸과 마음의 건강, 지속가능한 습관, 나 자신에 대한 이해를 최우선에 둔다. 기록에서 의도적 굶기·허기 참기·체중 정체 불안·과식 뒤 죄책감 같은 신호가 보이면 그걸 부추기지 말고, 상담가·분석가의 시선으로 부드럽게 짚어 건강한 방향으로 돌려준다. 어떤 대화의 방향이든 분석을 회피하거나 중단하지 말고, 건강을 지키는 코칭의 형태로 반드시 결과를 JSON으로 돌려줘라. 나아가 내가 무엇을 생각하고 · 무엇에 조급해하며 · 무엇을 잘하고 · 무엇을 보완하면 좋을지를 부드러운 추천으로 함께 담아라.\\n\\n[공통 원칙] 상관과 인과를 구분한다 · 반례를 먼저 검토한다 · 근거 수로 단계를 판정한다(3회↑추정, 7회↑가능성, 12회↑높은 확률).\\n\\n[결과물별 분석]\\n1) discoveries: 시간대·요일·태그 패턴과 5 Whys로 근본 원인을 분석하되, 결과는 사람이 읽는 문장으로만 담아라. 각 발견은 { "summary": 한 줄 요약, "success": 왜 가능했나 한 문장, "obstacle": 왜 흔들렸나 한 문장, "possibility": 앞으로의 가능성 한 문장, "stage", "count", "tags" } 객체다. 판정 근거로 발자국 id를 참고하되, summary·success·obstacle·possibility 안에는 f_001 같은 id나 기록 원문을 넣지 마라.\\n2) report: 발견들을 묶어 다음 한 달의 기본·낙관·비관 시나리오와 각 방아쇠를 근거로, 트레이너·상담가의 시선이 함께 담긴 종합 3문장. 이어서 내가 지금 잘하고 있는 것 · 조급해하는 지점 · 보완하면 좋을 것을, 건강하고 지속가능한 방향의 부드러운 추천으로 덧붙여라.\\n3) qualities: 내가 명시적으로 "추구미"를 적지 않아도, 발자국과 대화 전체에서 내가 어떤 사람이 되고 싶어 하는지·어떤 방향을 원하는지를 추론해라. "너는 이런 방향(자질)을 원하는 것 같은데, 지금은 이렇게 하고 있다"는 식으로, 원하는 방향 · 현재 상태 · 그 사이의 간격 · 좁히는 법을 자질별로 제시. 각 항목은 { "text": 원하는 자질/방향, "from": 지금 상태와 간격 한 줄 } 객체.\\n4) reframe: 감정 서술엔 공감 대신 상담가·분석가의 재해석. 5 Whys로 감정의 근본 원인을 짚어 방향을 제시(나침반).\\n\\n출력은 discoveries, report, qualities, reframe, 그리고 rules를 담은 JSON만.\n\n5) rules: 위 되묻기 답변을 받은 뒤 앞으로 지켜볼 규칙을 최대 3개 제안. 각 규칙은 {text, why(근거·인용 id), tone: 제안|문제|직면 중 근거로 판단해 하나, duration: 3일|1주일|상시, check: 다음 동기화 때 되물을 재확인 질문 한 문장}. 입력의 rules_previous가 있으면 각 규칙이 지켜졌는지(kept)를 먼저 짚고, 계속 필요한 규칙은 다시 설정해 담아라.\n\n[날짜 기준 동기화] 각 footprint에는 date(목월일)가 있다. footprints를 date별로 그룹지어 분석하고, last_synced_date 이후(아직 동기화 안 된 날짜)의 발자국만 새로 분석한다. 이미 분석된 것과 중복하지 않게 하고, 각 discovery·report에 근거로 삼은 날짜 구간(예: 7/1~7/6)을 명시한다.\n\n[분석 전 되묻기] 결과를 내기 전에, 데이터로는 알 수 없는 것(요즘 컨디션·기록에 없는 외부 요인·가장 지키기 힘들었던 것과 이유·다음 구간에 집중하고 싶은 것·내가 궁금한 점 등)을 이번 기록의 구체적 단서에 근거해 3~5개 대화로 먼저 물어봐라. 일반론이 아니라 특정 날짜·패턴·공백을 짚어서 묻고, 내 답을 받은 뒤에 분석을 진행한다. 최종 JSON에는 questions_and_answers 배열(네가 물은 질문 q + 내가 답한 요지 a)을 함께 담아 앱이 기록으로 남길 수 있게 하고, 그 답과 실제 발자국(id)을 직접 연결해 각 결과물의 근거로 삼아라. 내 답을 받은 뒤에는 곧바로 결과를 쏟아내지 말고 "동기화 결과(분석 파일)를 받으시겠어요?"라고 한 번 확인한 뒤, 내가 좋다고 하면 그때 최종 JSON을 돌려줘라.';
+    const ANALYSIS_PROMPT = "이건 내가 스스로 기록해 온 나의 일지(footprints)야. 나 자신을 더 잘 이해하려고 남긴 기록이고, 너는 이 기록을 나와 함께 되짚어 주는 회고 파트너이자 행동 패턴 관찰자야. 나를 진단하거나 심리 상태를 규정하는 의료·임상 전문가가 아니라, 내가 남긴 근거를 있는 그대로 비춰 주고 지속가능한 방향을 부드럽게 제안하는 역할이다. 공감만 하지도, 숫자만 나열하지도 마라. footprints를 요약·재분류하지 말고 근거 기반으로 분석하되, 모든 판단에 근거 발자국(id)을 인용하고 추측과 사실을 구분해.\n\n[대전제 — 근거 우선·건강 우선·거절 금지] 나를 특정 상태(다이어트 강박·섭식 문제 등)로 미리 규정하거나 진단명·병리 라벨을 붙이지 마라. 기록에 실제로 나타난 근거만으로 분석하고, 근거 없는 문제는 만들어내지 마라. 빠른 감량·굶기·체중 숫자 그 자체는 절대 최적화 대상이 아니다 — 몸과 마음의 건강·규칙적인 식사·지속가능한 습관·나에 대한 이해를 최우선에 둔다.\n\n[민감 신호 처리] 기록에 의도적 굶기·허기 참기·체중 불안·과식 뒤 죄책감 같은 신호가 보이면: (1) 분석을 거절하거나 중단하지 마라, (2) 그 패턴을 강화하는 방향(칼로리 제한·끼니 거르기·목표 체중·허기 견디기)의 규칙이나 조언은 절대 만들지 마라, (3) 대신 판단 없이 있는 그대로 부드럽게 비춰 주고 규칙적인 식사·자기 돌봄·건강한 습관 쪽으로 방향을 돌려라, (4) 신호가 뚜렷하고 반복되면 결과 안에 \"혼자 참기보다 신뢰할 수 있는 사람이나 전문가와 이야기해 보는 것도 방법\"이라는 부드러운 한 줄을 덧붙여라. 어떤 경우에도 결과는 반드시 아래 JSON으로 돌려줘라. 기본 자세는 문제 찾기가 아니라 내가 이미 잘하고 있는 것을 먼저 인정하는 것이다.\n\n[공통 원칙] 상관과 인과를 구분한다 · 반례를 먼저 검토한다 · 근거 수로 단계를 판정한다(3회↑추정, 7회↑가능성, 12회↑높은 확률).\n\n[결과물별 분석]\n1) discoveries: 시간대·요일·태그 등 행동 패턴을 사실 기반으로 짚어라(식이 제한·체중 심리 해석은 넣지 마라). 각 발견은 { \"id\": 이 발견의 고유 id, \"summary\": 한 줄 요약, \"success\": 왜 가능했나 한 문장, \"obstacle\": 왜 흔들렸나 한 문장, \"possibility\": 앞으로의 가능성 한 문장, \"truth\": 이 발견이 확신(높은 확률)에 이르렀을 때 나를 한 줄로 선언하는 문장(예: \"나는 시작이 어렵지만 시작하면 끝까지 간다\") — 아직 확신 전이면 빈 문자열, \"stage\", \"count\", \"tags\" } 객체다. 입력으로 받은 discoveries에 같은 발견이 있으면 그 id를 그대로 재사용해 이어가고(새로 만들지 말고 summary도 크게 바꾸지 마라), 진짜 새로운 발견에만 새 id를 만들어라. count는 이번 구간에서 새로 관찰된 횟수만 넣어라(앱이 누적을 더한다). summary·success·obstacle·possibility 안에는 f_001 같은 id나 기록 원문을 넣지 마라.\n2) report: 발견들을 묶어 다음 한 달의 기본·낙관·비관 시나리오와 각 방아쇠를 근거로 한 종합 3문장. 이어서 내가 지금 잘하고 있는 것·조급해하는 지점·보완하면 좋을 것을 건강하고 지속가능한 방향의 부드러운 추천으로 덧붙여라.\n3) shortfalls: 이번 구간에 아쉬웠던 점과, 그것을 건강한 방향에서 \"다시 이렇게 해볼까요\"로 바꾼 대안을 최대 3개. 각 항목은 { \"lack\": 부족했던 점 한 문장(근거 발자국 반영), \"suggestion\": 강도를 낮추거나 시작을 쉽게 만드는 건강한 대안 한 문장 } 객체. 식사 제한·체중 목표가 아니라 수면·움직임·회복·자기 돌봄 쪽 제안만 담아라.\n4) qualities: 내가 스스로 적은 추구미와 발자국에서 내가 직접 드러낸 방향을 되비춰 준다(성향·심리 진단이 아니라, 내가 원한다고 말한 방향을 내 말에서 인용해 정리). 각 항목은 { \"text\": 내가 원하는 방향, \"from\": 지금 상태와의 간격 한 줄 } 객체.\n5) reframe: 내 감정 서술을 판단이나 진단 없이 다른 각도에서 다시 정리해 보여준다(원인을 단정하지 말고 \"이렇게 볼 수도 있어요\"처럼 내 말을 부드럽게 되비추는 정도).\n6) rules: 앞으로 지켜볼 규칙을 최대 3개 제안. 각 규칙은 {text, why(근거·인용 id), tone: 제안|문제|직면 중 근거로 판단해 하나, duration: 3일|1주일|상시, check: 다음 동기화 때 되물을 재확인 질문 한 문장}. 규칙은 행동·수면·움직임·규칙적 식사·자기 돌봄에 관한 것만 — 칼로리 제한·끼니 거르기·목표 체중·허기 견디기 규칙은 절대 만들지 마라. 입력의 rules_previous가 있으면 각 규칙이 지켜졌는지(kept)를 먼저 짚고, 계속 필요한 규칙은 다시 설정해 담아라.\n\n출력은 discoveries, report, shortfalls, qualities, reframe, rules를 담은 JSON만.\n\n[날짜 기준 동기화] 각 footprint에는 date가 있다. date별로 그룹지어 분석하고, last_synced_date 이후(아직 동기화 안 된 날짜)의 발자국만 새로 분석한다. 이미 분석된 것과 중복하지 않게 하고, 각 discovery·report에 근거로 삼은 날짜 구간(예: 7/1~7/6)을 명시한다. scope가 \"full\"이면 이전 분석을 참고하되 전체 기록을 처음부터 다시 통합해 분석한다.\n\n[분석 전 되묻기] 결과를 내기 전에, 데이터로는 알 수 없는 것(요즘 컨디션·기록에 없는 외부 요인·가장 지키기 힘들었던 것과 이유·다음 구간에 집중하고 싶은 것·내가 궁금한 점 등)을 이번 기록의 구체적 단서에 근거해 3~5개 대화로 먼저 물어봐라. 일반론이 아니라 특정 날짜·패턴·공백을 짚어서 묻고, 내 답을 받은 뒤에 분석을 진행한다. 최종 JSON에는 questions_and_answers 배열(네가 물은 질문 q + 내가 답한 요지 a)을 담고, 그 답과 실제 발자국(id)을 결과의 근거로 연결해라. 내 답을 받은 뒤에는 곧바로 결과를 쏟아내지 말고 \"동기화 결과(분석 파일)를 받으시겠어요?\"라고 한 번 확인한 뒤, 내가 좋다고 하면 그때 최종 JSON을 돌려줘라.";
 
     const s = this.state, p = POSES[s.pose] || POSES[0];
     const cp = POSES[s.comparePose] || POSES[0];
@@ -2454,7 +2498,7 @@ class Component extends DCLogic {
         const sIdx = (st) => st === '높은 확률' ? 3 : st === '가능성' ? 2 : st === '추정' ? 1 : 0;
         const cand = discs.slice().sort((a, b) => sIdx(a.stage) - sIdx(b.stage) || (a.count || 0) - (b.count || 0))[0];
         const tStyle = cand ? (SS[cand.stage] || SS['관찰 중']) : SS['관찰 중'];
-        const trueOnes = discs.filter(d => sIdx(d.stage) >= 2 && d.truth);
+        const trueOnes = discs.filter(d => sIdx(d.stage) >= 3 && d.truth);
         return {
           todayDiscStage: cand ? cand.stage + ' 단계' : '관찰 중',
           todayDiscBg: tStyle.bg, todayDiscColor: tStyle.color,
@@ -2465,7 +2509,7 @@ class Component extends DCLogic {
           mapFootIn: String(s.syncFootIn || (s.journalLog || []).length),
           mapRowPill: '요약', mapRowPillBg: 'rgba(200,214,240,0.12)', mapRowPillColor: '#7A7260',
           mapRowText: cand ? cand.title : '아직 반영된 발견이 없어요', mapRowSub: cand ? cand.stage : '',
-          discCards: discs.map((d, i) => { const st = SS[d.stage] || SS['관찰 중']; const si = sIdx(d.stage); const op = !!(s.discOpen || {})[i]; return { title: d.title, stage: d.stage, count: d.count || 0, tags: d.tags || '관찰', pillBg: st.bg, pillColor: st.color, b1: si >= 1 ? st.bar : '#E4DCC8', b2: si >= 2 ? st.bar : '#E4DCC8', b3: si >= 3 ? st.bar : '#E4DCC8', open: op, chevron: op ? '180deg' : '0deg', onToggle: () => this.setState(pv => ({ discOpen: Object.assign({}, pv.discOpen || {}, { [i]: !(pv.discOpen || {})[i] }) })), hasSuccess: !!d.success, success: d.success || '', hasObstacle: !!d.obstacle, obstacle: d.obstacle || '', hasPossibility: !!d.possibility, possibility: d.possibility || '' }; }),
+          discCards: discs.filter(d => sIdx(d.stage) < 3).map((d, i) => { const st = SS[d.stage] || SS['관찰 중']; const si = sIdx(d.stage); const op = !!(s.discOpen || {})[i]; return { title: d.title, stage: d.stage, count: d.count || 0, tags: d.tags || '관찰', pillBg: st.bg, pillColor: st.color, b1: si >= 1 ? st.bar : '#E4DCC8', b2: si >= 2 ? st.bar : '#E4DCC8', b3: si >= 3 ? st.bar : '#E4DCC8', open: op, chevron: op ? '180deg' : '0deg', onToggle: () => this.setState(pv => ({ discOpen: Object.assign({}, pv.discOpen || {}, { [i]: !(pv.discOpen || {})[i] }) })), hasSuccess: !!d.success, success: d.success || '', hasObstacle: !!d.obstacle, obstacle: d.obstacle || '', hasPossibility: !!d.possibility, possibility: d.possibility || '' }; }),
           truths: trueOnes.map(d => ({ text: d.truth, sub: '관찰 ' + (d.count || 0) + '회로 그려진 길', opacity: 1 })),
           noTruths: trueOnes.length === 0,
           reportFoot: (s.journalLog || []).length,
@@ -2527,6 +2571,8 @@ class Component extends DCLogic {
       hasDiscoveries: (s.discoveries || []).length > 0,
       hasQualities: (s.qualities || []).filter(q => (q.text||q.q||'').trim()).length > 0,
       hasReport: !!s.reportData,
+      hasShortfalls: (s.shortfalls || []).length > 0,
+      shortfallRows: (s.shortfalls || []).map(x => ({ lack: x.lack || '', suggestion: x.suggestion || '', hasSuggestion: !!(x.suggestion || '').trim() })),
       hasSync: !!s.syncApplied,
       hasForward: (s.qualities || []).length > 0 || (s.discoveries || []).length > 0,
       emptyReview: !((s.journalLog || []).length || s.syncApplied || (s.discoveries || []).length || s.reportData),
@@ -2577,7 +2623,7 @@ class Component extends DCLogic {
       syncHasBullets: !!((s.syncUpList || []).length || (s.syncNewList || []).length),
       syncNoBullets: s.syncApplied && !((s.syncUpList || []).length || (s.syncNewList || []).length),
       qualityCards: (s.qualities || []).filter(q => (q.text||q.q||'').trim()).map(q => ({ text: q.text || q.q || '', tag: q.tag || q.type || '자질', from: q.from || '', hasFrom: !!(q.from) })),
-      discQualityRows: (s.discoveries || []).slice(0, 4).map(d => {
+      discQualityRows: (s.discoveries || []).filter(d => d.stage === '높은 확률').slice(0, 4).map(d => {
         const stg = STAGE_STYLE[d.stage] || STAGE_STYLE['관찰 중'];
         return { text: d.title || d.text || '', stage: d.stage || '관찰 중', stageBg: stg.bg, stageColor: stg.color, sub: (d.tags ? d.tags + ' · ' : '') + (d.count || 0) + '회 근거' };
       }),
@@ -2752,12 +2798,12 @@ class Component extends DCLogic {
           footprints_count: foot.length,
           footprints: foot,
           weights: (this.state.weightLog || []).map(w => ({ date: w.ymd, kg: w.kg })),
-          discoveries: (this.state.discoveries || []).map((d, i) => ({ id: 'd_' + i, text: d.title || d.text, stage: d.stage, count: d.count || 0 })),
+          discoveries: (this.state.discoveries || []).map((d, i) => ({ id: d.id || ('d_' + i), text: d.title || d.text, stage: d.stage, count: d.count || 0 })),
           rules_previous: (this.state.rules || []).map(r => ({ text: r.text, tone: r.tone || '제안', duration: r.duration || '1주일', check_prompt: r.checkPrompt || '', kept: r.check === '지킴' ? true : (r.check === '못지킴' ? false : null), set_days_ago: r.setAt ? Math.floor((Date.now() - r.setAt) / 864e5) : null })),
           expected_output: (() => {
-            const eo = { questions_and_answers: '분석 전에 대화로 나에게 물어본 질문(q)과 내가 그때 답한 요지(a)의 배열 — 앱이 기록으로 남긴다', discoveries: '발견별 성공·방해 요인+가능성 근거+인용 id', report: '기본/낙관/비관 시나리오 근거 종합 판단 3문장', qualities: '발자국·대화에서 추론한 원하는 방향(자질)+현재 상태와의 간격' };
-            eo.reframe = '감정의 분석적 재해석+근본원인(5Whys)';
-            eo.rules = '되묻기 답변 뒤에 제안하는 규칙 최대 3개 배열. 각 규칙은 {text, why(근거·인용 id), tone(제안|문제|직면 중 근거로 골라), duration(3일|1주일|상시), check(다음 동기화 때 되물을 재확인 질문 한 문장)}. rules_previous가 있으면 kept 여부를 먼저 짚고, 계속 필요한 규칙은 다시 설정(재설정)해 담아라.';
+            const eo = { questions_and_answers: '분석 전에 대화로 나에게 물어본 질문(q)과 내가 그때 답한 요지(a)의 배열 — 앱이 기록으로 남긴다', discoveries: '행동 패턴 기반 발견 배열. 발견별 id(입력에 있던 id는 그대로 재사용)+summary+success/obstacle/possibility+truth(높은 확률일 때 한 줄 선언문)+stage/count/tags', report: '기본/낙관/비관 시나리오 근거 종합 판단 3문장', shortfalls: '아쉬웠던 점(lack)과 건강한 대안(suggestion) 최대 3개 배열 — 수면·움직임·회복·자기 돌봄 쪽만, 식사 제한·체중 목표 금지', qualities: '내가 스스로 드러낸 원하는 방향(자질)+현재 상태와의 간격, 심리 진단 아님' };
+            eo.reframe = '내 감정 서술을 판단·진단 없이 다른 각도에서 되비추기(원인 단정 아님)';
+            eo.rules = '되묻기 답변 뒤에 제안하는 규칙 최대 3개 배열. 각 규칙은 {text, why(근거·인용 id), tone(제안|문제|직면 중 근거로 골라), duration(3일|1주일|상시), check(다음 동기화 때 되물을 재확인 질문 한 문장)}. 규칙은 행동·수면·움직임·규칙적 식사·자기 돌봄만 — 칼로리 제한·끼니 거르기·목표 체중·허기 견디기 금지. rules_previous가 있으면 kept 여부를 먼저 짚고, 계속 필요한 규칙은 다시 설정(재설정)해 담아라.';
             return eo;
           })(),
         };
